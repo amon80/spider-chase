@@ -18,8 +18,10 @@
 #include "hal.h"
 #include "test.h"
 
-void (*functioPtrUP)();
-void (*functioPtrDOWN)();
+void (*functioPtrLeftUP)();
+void (*functioPtrLeftDOWN)();
+void (*functioPtrRightUP)();
+void (*functioPtrRightDOWN)();
 
 //1 positivo motore sinistro
 //2 negativo motore sinistro
@@ -41,41 +43,69 @@ static struct Mapping_GPIO{
 	unsigned int port4;
 }mapping;
 
-static void Avanti_Up(){
+static void Sinistra_Avanti_up(){
 	palSetPad(mapping.type1, mapping.port1);
+}
+
+static void Sinistra_Avanti_Down(){
+	palClearPad(mapping.type1, mapping.port1);
+}
+
+static void Destra_Avanti_up(){
 	palSetPad(mapping.type3, mapping.port3);
 }
 
-static void Avanti_Down(){
-	palClearPad(mapping.type1, mapping.port1);
+static void Destra_Avanti_Down(){
 	palClearPad(mapping.type3, mapping.port3);
 }
 
-
-static void Dietro_Up(){
+static void Sinistra_Dietro_up(){
 	palSetPad(mapping.type2, mapping.port2);
+}
+
+static void Sinistra_Dietro_Down(){
+	palClearPad(mapping.type2, mapping.port2);
+}
+
+static void Destra_Dietro_up(){
 	palSetPad(mapping.type4, mapping.port4);
 }
 
-static void Dietro_Down(){
-	palClearPad(mapping.type2, mapping.port2);
+static void Destra_Dietro_Down(){
 	palClearPad(mapping.type4, mapping.port4);
 }
 
 
+//pwm callbacks for left engine
 static void pwmpcb(PWMDriver *pwmp) {
 
   (void)pwmp;
-  (*functioPtrDOWN)();
+  (*functioPtrLeftDOWN)();
 }
 
 static void pwmc1cb(PWMDriver *pwmp) {
 
   (void)pwmp;
-  (*functioPtrUP)();
+  (*functioPtrLeftUP)();
 }
 
-static PWMConfig pwmcfg = {
+
+//pwm callbacks for right engine
+static void pwm2pcb(PWMDriver *pwmp) {
+
+  (void)pwmp;
+  (*functioPtrRightDOWN)();
+}
+
+static void pwm2c1cb(PWMDriver *pwmp) {
+
+  (void)pwmp;
+  (*functioPtrRightUP)();
+}
+
+
+//configuration for left engine
+static PWMConfig pwm1cfg = {
   10000,                                    /* 10kHz PWM clock frequency.   */
   500,                                    /* Initial PWM period 1S.       */
   pwmpcb,
@@ -89,15 +119,24 @@ static PWMConfig pwmcfg = {
   0
 };
 
+//configuration for right engine
+static PWMConfig pwm2cfg = {
+  10000,                                    /* 10kHz PWM clock frequency.   */
+  500,                                    /* Initial PWM period 1S.       */
+  pwm2pcb,
+  {
+   {PWM_OUTPUT_ACTIVE_HIGH, pwm2c1cb},
+   {PWM_OUTPUT_DISABLED, NULL},
+   {PWM_OUTPUT_DISABLED, NULL},
+   {PWM_OUTPUT_DISABLED, NULL}
+  },
+  0,
+  0
+};
+
+
 int main(void) {
 
-  /*
-   * System initializations.
-   * - HAL initialization, this also initializes the configured device drivers
-   *   and performs the board-specific initializations.
-   * - Kernel initialization, the main() function becomes a thread and the
-   *   RTOS is active.
-   */
   halInit();
   chSysInit();
 
@@ -123,19 +162,33 @@ int main(void) {
   palClearPad(mapping.type4, mapping.port4);
 
 
-  functioPtrUP = &Avanti_Up;
-  functioPtrDOWN = &Avanti_Down;
+  functioPtrLeftUP = &Sinistra_Avanti_up;
+  functioPtrLeftDOWN = &Sinistra_Avanti_Down;
+
+  functioPtrRightUP = &Destra_Avanti_up;
+  functioPtrRightDOWN = &Destra_Avanti_Down;
 
   /*
    * Activates the serial driver 2 using the driver default configuration.
   */
   sdStart(&SD2, NULL);
-  pwmStart(&PWMD1, &pwmcfg);
+
+  //start pwm1 (left engine)
+  pwmStart(&PWMD1, &pwm1cfg);
   pwmEnablePeriodicNotification(&PWMD1);
   pwmEnableChannelNotification(&PWMD1, 0);
 
   pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 100));
   pwmEnableChannelNotification(&PWMD1, 0);
+  //chThdSleepMilliseconds(1000);
+
+  //start pwm2 (right engine)
+  pwmStart(&PWMD3, &pwm2cfg);
+  pwmEnablePeriodicNotification(&PWMD3);
+  pwmEnableChannelNotification(&PWMD3, 0);
+
+  pwmEnableChannel(&PWMD3, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD3, 50));
+  pwmEnableChannelNotification(&PWMD3, 0);
   chThdSleepMilliseconds(1000);
 
   int duty = 1;
