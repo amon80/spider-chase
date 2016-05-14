@@ -1,0 +1,14 @@
+{
+  "name": "RoboWarsApp",
+  "version": "0.1.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "devDependencies": {
+    "electron-prebuilt": "1.0.1",
+    "keycode": "2.1.1",
+    "request" : "2.72.0" 
+  }
+}
