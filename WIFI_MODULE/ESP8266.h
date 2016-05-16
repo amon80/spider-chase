@@ -24,6 +24,7 @@ void readAndPrintResponse(void);
 int mystrlen(char* text);
 static void println(char *p);
 void blinkBoardLed(void);
+char* StrStr(const char *str, const char *target);
 
 static SerialConfig uartCfgWiFi = {115200, // bit rate
     };
@@ -44,7 +45,10 @@ static char* ESP8266_SEND_TCP_DATA = "AT+CIPSEND=";
 static char* ESP8266_CLOSE_CONN = "AT+CIPCLOSE=";
 static char FIND_PLUS = 0, FIND_I = 0, FIND_P = 0, FIND_D = 0; //+IPD,0,89:GET /?pos=10.1,20.3 HTTP/1.1 User-Agent: curl/7.39.0 Host: 192.168.4.1Accept: */*
 static char x[3], y[3];
-static THD_WORKING_AREA(waThread1, 128);
+char clientID[2];
+char command[8];    //could be "M023120" for: motor left to 23 and motor right to 120
+                    //else could be "PXXYY____" for position is xx yy
+static THD_WORKING_AREA(waThread1, 2048);
 /**
  * Asynchronous serial SD1
  */
@@ -52,6 +56,9 @@ static msg_t Uart1EVT_Thread(void *p) {
   int letterAfterPlus = 0;
   int spaceAfterD = 0;
   int x_charRead = 0, y_charRead = 0;
+  int BUFF_SIZE = 1024;
+  char received[BUFF_SIZE];
+  int pos = 0;
   event_listener_t el1;
   eventflags_t flags;
 
@@ -67,89 +74,39 @@ static msg_t Uart1EVT_Thread(void *p) {
       msg_t charbuf;
       do {
         charbuf = chnGetTimeout(WIFI_SERIAL, TIME_IMMEDIATE);
+        chThdSleepMilliseconds(10);
         if (charbuf != Q_TIMEOUT) {
-          //check if +IPD command in
-          if (charbuf == '+') {
-            FIND_PLUS = 1;
-            letterAfterPlus = 1;
-          }
-          if (charbuf == 'I') {
-            if (letterAfterPlus == 1) {
-              FIND_I = 1;
-              letterAfterPlus++;
-            }
-            else {
-              FIND_PLUS = 0;
-              letterAfterPlus = 0;
-            }
-          }
-          if (charbuf == 'P') {
-            if (letterAfterPlus == 2) {
-              FIND_P = 1;
-              letterAfterPlus++;
-            }
-            else {
-              FIND_I = 0;
-              FIND_PLUS = 0;
-              letterAfterPlus = 0;
-            }
-          }
-          if (charbuf == 'D') {
-            if (letterAfterPlus == 3) {
-              FIND_D = 1;
-              letterAfterPlus++;
-            }
-          }
-          if (FIND_D == 1) {
-            if (spaceAfterD >= 15 && x_charRead < 2) {
-              //we are after pos=: expected 10,20 (example)
-              x[x_charRead] = charbuf;
-              x_charRead++;
-            }
-            else if (spaceAfterD >= 15 && x_charRead == 2 && y_charRead < 2) {
-              x[x_charRead] = '\0';
-              y[y_charRead] = charbuf;
-              y_charRead++;
-            }
-            else if (spaceAfterD >= 15 && x_charRead == 2 && y_charRead == 2) {
-              y[y_charRead] = '\0';
-              letterAfterPlus = 0;
-              FIND_PLUS = 0;
-              FIND_I = 0;
-              FIND_P = 0;
-              FIND_D = 0;
-              x_charRead = 0;
-              y_charRead = 0;
-              spaceAfterD = 0;
-              /*chprintf((BaseChannel *)MONITOR_SERIAL, x, 3);
-               chprintf((BaseChannel *)MONITOR_SERIAL, y, 3);*/
-              blinkBoardLed();
-              printWebPage();
-            }
-            else {
-              spaceAfterD++;
-              letterAfterPlus++;
-            }
-          }
-          else {
-            FIND_PLUS = 0;
-            FIND_I = 0;
-            FIND_P = 0;
-            FIND_D = 0;
-            x_charRead = 0;
-            y_charRead = 0;
-            spaceAfterD = 0;
-          }
           chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%c", (char)charbuf);
+          if (pos < BUFF_SIZE) {
+            received[pos] = (char)charbuf;
+            pos++;
+          }
         }
       } while (charbuf != Q_TIMEOUT );
+      received[pos] = '\0';
+      /***********DO SOMETHING WITH RECEIVED MESSAGE************/
+      char* clearRequest = StrStr(received, "+IPD"); //contains 'received' substring that start with "+IPD"
+      if (StrStr(received, "+IPD") != NULL){
+        chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s", "Received http request");
+        clientID[0] = clearRequest[5];
+        clientID[1] = '\0';
+        command[0] = clearRequest[18];
+        command[1] = clearRequest[19];
+        command[2] = clearRequest[20];
+        command[3] = clearRequest[21];
+        command[4] = clearRequest[22];
+        command[5] = clearRequest[23];
+        command[6] = clearRequest[24];
+        command[7] = clearRequest[25];
+        chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s", "Client id=");
+        chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s\n", clientID);
+        chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s", "Command=");
+        chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s\n", command);
+      }
+      /***********END************/
+      pos = 0;
     }
   }
-
-  //println((char)flags);
-  /*char c = chSequentialStreamGet(WIFI_SERIAL);
-   chprintf((BaseSequentialStream *) MONITOR_SERIAL, "%c", c);*/
-  //readAndPrintResponse();
 }
 
 void blinkBoardLed() {
@@ -249,30 +206,38 @@ void readAndPrintResponse() {
 }
 
 void printWebPage() {
-  //char webpage[] = "<h1>Hello</h1><button>LED1</button>\r\n";
-  char webpage[] = "<h1>Hello</h1>";
-  char cipSend[] = "AT+CIPSEND=0,14\r\n"; //"AT+CIPSEND=52\r\n";
+  /*char webpage[] = "<h1>Hello</h1>";
+   char cipSend[] = "AT+CIPSEND=0,14\r\n"; //"AT+CIPSEND=52\r\n";
+   char cipClose[] = "AT+CIPCLOSE=0\r\n";*/
+
+  char webpage[] = "1";
+  char cipSend[] = "AT+CIPSEND=0,1\r\n"; //"AT+CIPSEND=52\r\n";
   char cipClose[] = "AT+CIPCLOSE=0\r\n";
   sendToESP8266(cipSend, COMMAND_SLEEP);
   sendToESP8266(webpage, COMMAND_SLEEP);
-  //sendToESP8266(cipClose, COMMAND_SLEEP);
+//sendToESP8266(cipClose, COMMAND_SLEEP);
 }
 
-int mystrcontains(char* text, char* toFind) {
-  int i = 0;
-  int j = 0;
-  while (text[i] != '\0' && toFind[j] != '\0') {
-    if (i > j && j != 0) {
-      break;
+
+char* StrStr(const char *str, const char *target) {
+  if (!*target) return str;
+  char *p1 = (char*)str, *p2 = (char*)target;
+  char *p1Adv = (char*)str;
+  while (*++p2)
+    p1Adv++;
+  while (*p1Adv) {
+    char *p1Begin = p1;
+    p2 = (char*)target;
+    while (*p1 && *p2 && *p1 == *p2) {
+      p1++;
+      p2++;
     }
-    if (text[i] == toFind[j]) {
-      j++;
-      if (j == mystrlen(toFind))
-        return 1;
-    }
-    i++;
+    if (!*p2)
+      return p1Begin;
+    p1 = p1Begin + 1;
+    p1Adv++;
   }
-  return 0;
+  return NULL;
 }
 
 static void println(char *p) {
