@@ -4,19 +4,21 @@
 const Gauge  = require('./gauge.min.js');
 const keycode = require('keycode');
 const request = require('request');
+const controller =  require('./Controller.js')
 
 var remote = require('electron').remote;
 var ipcRenderer = require('electron').ipcRenderer;
 
-var dict = {"12":"up","13":"down","15":"right","14":"left"}
+var dict = {"12":"up","13":"down","15":"right","14":"left", "3":"r","0":"f"}
  
 var oldbutton
 var oldaxis;
 
+var retro = false;
 var velocityLeft = 0;
 var velocityRight = 0;
-var maxValue = 3000;
-var increment = 100;
+var maxValue = 127;
+var increment = 10;
 var gaugeLeft;
 var gaugeRight;
 
@@ -37,7 +39,7 @@ function CreateGauge(){
       generateGradient: true
     };
     var targetLeft = document.getElementById('left'); // your canvas element
-    targetLeft.width  = 350;
+    targetLeft.width  = 320;
     targetLeft.height = 200;
     gaugeLeft = new Gauge.Gauge(targetLeft).setOptions(opts);
     gaugeLeft.maxValue = maxValue; // set max gauge value
@@ -49,7 +51,7 @@ function CreateGauge(){
     //require('electron').remote.getGlobal('sharedObject').LeftGauge = gaugeLeft;
 
     var targetRight = document.getElementById('right'); // your canvas element
-    targetRight.width  = 350;
+    targetRight.width  = 320;
     targetRight.height = 200;
     gaugeRight = new Gauge.Gauge(targetRight).setOptions(opts);
     gaugeRight.maxValue = maxValue; // set max gauge value
@@ -65,6 +67,70 @@ function CreateGauge(){
 function renderGauge(pressed){
 
         console.log(pressed);
+
+
+        if(pressed=='r' && !retro){
+            retro = true;
+            document.getElementById("arrow").src="./img/Down.png";
+            var opts = {
+              lines: 12, // The number of lines to draw
+              angle: 0.15, // The length of each line
+              lineWidth: 0.44, // The line thickness
+              pointer: {
+                length: 0.9, // The radius of the inner circle
+                strokeWidth: 0.035, // The rotation offset
+                color: '#000000' // Fill color
+              },
+              limitMax: 'false',   // If true, the pointer will not go past the end of the gauge
+              colorStart: '#CFABA1',   // Colors
+              colorStop: '#DA0000',    // just experiment with them
+              strokeColor: '#E0E0E0',   // to see which ones work best for you
+              generateGradient: true
+            };
+            velocityLeft = 0;
+            velocityRight = 0;
+            gaugeLeft.setOptions(opts);
+            gaugeLeft.maxValue = maxValue; // set max gauge value
+            gaugeLeft.animationSpeed = 1; // set animation speed (32 is default value)
+            gaugeLeft.set(velocityLeft); // set actual value
+
+            gaugeRight.setOptions(opts);
+            gaugeRight.maxValue = maxValue; // set max gauge value
+            gaugeRight.animationSpeed = 1; // set animation speed (32 is default value)
+            gaugeRight.set(velocityRight); // set actual value
+        }
+
+
+        if(pressed=='f' && retro){
+            retro = false;
+            document.getElementById("arrow").src="./img/Up.png";
+            var opts = {
+              lines: 12, // The number of lines to draw
+              angle: 0.15, // The length of each line
+              lineWidth: 0.44, // The line thickness
+              pointer: {
+                length: 0.9, // The radius of the inner circle
+                strokeWidth: 0.035, // The rotation offset
+                color: '#000000' // Fill color
+              },
+              limitMax: 'false',   // If true, the pointer will not go past the end of the gauge
+              colorStart: '#6FADCF',   // Colors
+              colorStop: '#8FC0DA',    // just experiment with them
+              strokeColor: '#E0E0E0',   // to see which ones work best for you
+              generateGradient: true
+            };
+            velocityLeft = 0;
+            velocityRight = 0;
+            gaugeLeft.setOptions(opts);
+            gaugeLeft.maxValue = maxValue; // set max gauge value
+            gaugeLeft.animationSpeed = 1; // set animation speed (32 is default value)
+            gaugeLeft.set(0); // set actual value
+
+            gaugeRight.setOptions(opts);
+            gaugeRight.maxValue = maxValue; // set max gauge value
+            gaugeRight.animationSpeed = 1; // set animation speed (32 is default value)
+            gaugeRight.set(0); // set actual value
+        }
 
          if(pressed=='up'){
             if(velocityLeft!=velocityRight){
@@ -113,9 +179,8 @@ function renderGauge(pressed){
 
 function ReadKeyboard(){
     window.addEventListener('keydown', function(e) {
-
+        document.getElementById("type").src="./img/KeyBoard.png";
         renderGauge(keycode(e));
-   
     });
 }
 
@@ -127,36 +192,38 @@ function ReadController(){
     var axis = remote.getGlobal('sharedObj').axis;
     if(button!=null){
         console.log(remote.getGlobal('sharedObj').button);
+        document.getElementById("type").src="./img/xboxPad.jpg";
         oldbutton = button
         renderGauge(dict[button])
-        //SendPackage(button);
+        SendPackage(button);
     }
     if(axis && axis!="0: 0.0000,1: 0.0000,2: 0.0000,3: 0.0000,"){
         console.log(remote.getGlobal('sharedObj').axis);
         oldaxis = axis;
-        //SendPackage(axis);
+        SendPackage(axis);
     }
     //console.log(axis);
 }
 
 function SendPackage(button){
+    if(retro)
+        stri = "p0"+pad(velocityLeft,3)+""+pad(velocityRight,3);
+    else
+        stri = "p0"+pad(velocityLeft*2,3)+""+pad(velocityRight*2,3);
+    console.log(stri);
     request
-        .get('http://127.0.0.1:2222?pressed='+button)
+        .get('http://192.168.4.1?c='+stri)
         .on('response', function(response) {
             console.log(response.statusCode) // 200 
             console.log(response.headers['content-type']) // 'image/png' 
         })
 }
 
+function pad(n, width, z) {
+  z = z || '0';
+  n = n + '';
+  return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+}
+
 CreateGauge();
 ReadKeyboard();
-
-const controller =  require('./Controller.js')
-
-console.log(ipcRenderer.sendSync('synchronous-message', 'ping')); // prints "pong"
-
-ipcRenderer.on('asynchronous-reply', (event, arg) => {
-  console.log(arg); // prints "pong"
-});
-ipcRenderer.send('asynchronous-message', 'ping');
-
