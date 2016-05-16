@@ -25,6 +25,11 @@ int mystrlen(char* text);
 static void println(char *p);
 void blinkBoardLed(void);
 char* StrStr(const char *str, const char *target);
+char *strcat(char *dest, const char *src);
+char *strcpy(char *dest, const char *src);
+int strlen(const char * str);
+void itoa(int n, char s[]);
+void reverse(char s[]);
 
 static SerialConfig uartCfgWiFi = {115200, // bit rate
     };
@@ -43,11 +48,10 @@ static char* ESP8266_SET_AS_ACCESS_POINT = "AT+CWMODE=2\r\n"; // configura come 
 static char* ESP8266_SET_AS_CLIENT = "AT+CWMODE=1\r\n";
 static char* ESP8266_SEND_TCP_DATA = "AT+CIPSEND=";
 static char* ESP8266_CLOSE_CONN = "AT+CIPCLOSE=";
-static char FIND_PLUS = 0, FIND_I = 0, FIND_P = 0, FIND_D = 0; //+IPD,0,89:GET /?pos=10.1,20.3 HTTP/1.1 User-Agent: curl/7.39.0 Host: 192.168.4.1Accept: */*
-static char x[3], y[3];
 char clientID[2];
-char command[8];    //could be "M023120" for: motor left to 23 and motor right to 120
+char command[9];    //could be "M023120" for: motor left to 23 and motor right to 120
                     //else could be "PXXYY____" for position is xx yy
+char request;
 static THD_WORKING_AREA(waThread1, 2048);
 /**
  * Asynchronous serial SD1
@@ -74,7 +78,7 @@ static msg_t Uart1EVT_Thread(void *p) {
       msg_t charbuf;
       do {
         charbuf = chnGetTimeout(WIFI_SERIAL, TIME_IMMEDIATE);
-        chThdSleepMilliseconds(10);
+        chThdSleepMilliseconds(1);
         if (charbuf != Q_TIMEOUT) {
           chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%c", (char)charbuf);
           if (pos < BUFF_SIZE) {
@@ -85,23 +89,26 @@ static msg_t Uart1EVT_Thread(void *p) {
       } while (charbuf != Q_TIMEOUT );
       received[pos] = '\0';
       /***********DO SOMETHING WITH RECEIVED MESSAGE************/
-      char* clearRequest = StrStr(received, "+IPD"); //contains 'received' substring that start with "+IPD"
+      char* clearRequest = StrStr(received, "+IPD"); //HTTP REQUEST
       if (StrStr(received, "+IPD") != NULL){
         chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s", "Received http request");
         clientID[0] = clearRequest[5];
         clientID[1] = '\0';
-        command[0] = clearRequest[18];
-        command[1] = clearRequest[19];
-        command[2] = clearRequest[20];
-        command[3] = clearRequest[21];
-        command[4] = clearRequest[22];
-        command[5] = clearRequest[23];
-        command[6] = clearRequest[24];
-        command[7] = clearRequest[25];
+        request = clearRequest[17]; //it is c for command (c=M0...)
+        command[0] = clearRequest[19];
+        command[1] = clearRequest[20];
+        command[2] = clearRequest[21];
+        command[3] = clearRequest[22];
+        command[4] = clearRequest[23];
+        command[5] = clearRequest[24];
+        command[6] = clearRequest[25];
+        command[7] = clearRequest[26];
+        command[8] = '\0';
         chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s", "Client id=");
         chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s\n", clientID);
         chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s", "Command=");
         chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s\n", command);
+        printWebPage();
       }
       /***********END************/
       pos = 0;
@@ -206,19 +213,53 @@ void readAndPrintResponse() {
 }
 
 void printWebPage() {
-  /*char webpage[] = "<h1>Hello</h1>";
-   char cipSend[] = "AT+CIPSEND=0,14\r\n"; //"AT+CIPSEND=52\r\n";
-   char cipClose[] = "AT+CIPCLOSE=0\r\n";*/
-
-  char webpage[] = "1";
-  char cipSend[] = "AT+CIPSEND=0,1\r\n"; //"AT+CIPSEND=52\r\n";
-  char cipClose[] = "AT+CIPCLOSE=0\r\n";
+  char cipSend[100] = {"AT+CIPSEND="};
+  /*char webPage[512] = {"<html><head></head><body>"
+      "<form>"
+      "<input type='text' name='c'></input>"
+      "<input type='submit' value='Send'>"
+      "</form>"};*/
+  char webPage[600] = {"<html><head></head><body><table border=0>"
+        "<tr><td></td><td><form><input type='hidden' name='c' value='M0127127'></input><input type='submit' value='^'></form></td><td></td></tr>"
+        "<tr><td><form><input type='hidden' name='c' value='M0255255'></input><input type='submit' value='<'></form></td><td></td><td><form><input type='hidden' name='c' value='M0127000'></input><input type='submit' value='>'></form></td></tr>"
+        "<tr><td></td><td><form><input type='hidden' name='c' value='M0000127'></input><input type='submit' value='-'></form></td><td></td></tr></table>"
+  };
+  char webPage1[20] = {"</body></html>"};
+  if (request == 'c')
+    strcat(webPage,command);
+  strcat(webPage,webPage1);
+  strcat(cipSend,clientID);
+  strcat(cipSend,",");
+  int pageLength = strlen(webPage);
+  char pageLengthAsString[100];
+  itoa(pageLength,pageLengthAsString);
+  strcat(cipSend,pageLengthAsString);
+  strcat(cipSend,"\r\n");
   sendToESP8266(cipSend, COMMAND_SLEEP);
-  sendToESP8266(webpage, COMMAND_SLEEP);
-//sendToESP8266(cipClose, COMMAND_SLEEP);
+  sendToESP8266(webPage, COMMAND_SLEEP);
+  char closeCommand[40];
+  strcpy(closeCommand,ESP8266_CLOSE_CONN);
+  strcat(closeCommand,clientID);
+  strcat(closeCommand,"\r\n");
+  sendToESP8266(closeCommand, COMMAND_SLEEP);
 }
 
+/**
+ * Return length of str as char (es. '47')
+ */
+int strlen(const char * str){
+    int len;
+    for (len = 0; str[len]; len++);
+    return len;
+}
 
+char *strcpy(char *dest, const char *src){
+  unsigned i;
+  for (i=0; src[i] != '\0'; ++i)
+    dest[i] = src[i];
+  dest[i] = '\0';
+  return dest;
+}
 char* StrStr(const char *str, const char *target) {
   if (!*target) return str;
   char *p1 = (char*)str, *p2 = (char*)target;
@@ -239,7 +280,15 @@ char* StrStr(const char *str, const char *target) {
   }
   return NULL;
 }
-
+char *strcat(char *dest, const char *src){
+    size_t i,j;
+    for (i = 0; dest[i] != '\0'; i++)
+        ;
+    for (j = 0; src[j] != '\0'; j++)
+        dest[i+j] = src[j];
+    dest[i+j] = '\0';
+    return dest;
+}
 static void println(char *p) {
 
   while (*p) {
@@ -248,3 +297,29 @@ static void println(char *p) {
   chSequentialStreamWrite(MONITOR_SERIAL, (uint8_t * )"\r\n", 2);
 }
 
+/* itoa:  convert n to characters in s */
+ void itoa(int n, char s[]){
+     int i, sign;
+     if ((sign = n) < 0)  /* record sign */
+         n = -n;          /* make n positive */
+     i = 0;
+     do {       /* generate digits in reverse order */
+         s[i++] = n % 10 + '0';   /* get next digit */
+     } while ((n /= 10) > 0);     /* delete it */
+     if (sign < 0)
+         s[i++] = '-';
+     s[i] = '\0';
+     reverse(s);
+ }
+
+ /* reverse:  reverse string s in place */
+void reverse(char s[]){
+    int i, j;
+    char c;
+
+    for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
+        c = s[i];
+        s[i] = s[j];
+        s[j] = c;
+    }
+}
