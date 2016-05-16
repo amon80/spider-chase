@@ -15,8 +15,8 @@ var oldaxis;
 
 var velocityLeft = 0;
 var velocityRight = 0;
-var maxValue = 3000;
-var increment = 100;
+var maxValue = 127;
+var increment = 10;
 var gaugeLeft;
 var gaugeRight;
 
@@ -129,23 +129,31 @@ function ReadController(){
         console.log(remote.getGlobal('sharedObj').button);
         oldbutton = button
         renderGauge(dict[button])
-        //SendPackage(button);
+        SendPackage(button);
     }
     if(axis && axis!="0: 0.0000,1: 0.0000,2: 0.0000,3: 0.0000,"){
         console.log(remote.getGlobal('sharedObj').axis);
         oldaxis = axis;
-        //SendPackage(axis);
+        SendPackage(axis);
     }
     //console.log(axis);
 }
 
 function SendPackage(button){
+    stri = "p0"+pad(velocityLeft,3)+""+pad(velocityRight,3);
+    console.log(stri);
     request
-        .get('http://127.0.0.1:2222?pressed='+button)
+        .get('http://192.168.4.1?c='+stri)
         .on('response', function(response) {
             console.log(response.statusCode) // 200 
             console.log(response.headers['content-type']) // 'image/png' 
         })
+}
+
+function pad(n, width, z) {
+  z = z || '0';
+  n = n + '';
+  return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 }
 
 CreateGauge();
