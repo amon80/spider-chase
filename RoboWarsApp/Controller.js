@@ -119,6 +119,7 @@ function updateStatus() {
       axistore += a.innerHTML+","
     }
     require('electron').remote.getGlobal('sharedObj').axis = axistore;
+    // console.log(axistore);
   }
 
   requestAnimationFrame(updateStatus);
