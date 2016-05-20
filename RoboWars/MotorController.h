@@ -165,13 +165,13 @@ void init_motor() {
   //start pwm1 (left engine)
   pwmStart(&PWMD1, &pwm1cfg);
   pwmEnablePeriodicNotification(&PWMD1);
-  pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 0));
+  pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 5000));
   pwmEnableChannelNotification(&PWMD1, 0);
 
   //start pwm2 (right engine)
   pwmStart(&PWMD3, &pwm2cfg);
   pwmEnablePeriodicNotification(&PWMD3);
-  pwmEnableChannel(&PWMD3, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD3, 0));
+  pwmEnableChannel(&PWMD3, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD3, 5000));
   pwmEnableChannelNotification(&PWMD3, 0);
 }
 
@@ -260,17 +260,17 @@ void control_motor(char* command) {
     functioPtrLeftUP = &Sinistra_Avanti_up;
     functioPtrLeftDOWN = &Sinistra_Avanti_Down;
 
-    pwm1 =  77.95 * velocity[0] + 100;
+    pwm1 =  10000 - 77.95 * velocity[0] + 100;
 
-    pwmEnableChannel(&PWMD1, 0, (pwmcnt_t)pwm1);
+    pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, pwm1));
   }
   else {    //<128
     functioPtrLeftUP = &Sinistra_Dietro_up;
     functioPtrLeftDOWN = &Sinistra_Dietro_Down;
 
-    pwm1 = 77.95 * velocity[0] + 100;
+    pwm1 = 10000 - 77.95 * velocity[0] + 100;
 
-    pwmEnableChannel(&PWMD1, 0, (pwmcnt_t)pwm1);
+    pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, pwm1));
   }
 
   if (velocity[1] >= 128) {
@@ -278,17 +278,17 @@ void control_motor(char* command) {
     functioPtrRightUP = &Destra_Avanti_up;
     functioPtrRightDOWN = &Destra_Avanti_Down;
 
-    pwm2 =  77.95 * velocity[1] + 100;
+    pwm2 =  10000 - 77.95 * velocity[1] + 100;
 
-    pwmEnableChannel(&PWMD3, 0, (pwmcnt_t)pwm2);
+    pwmEnableChannel(&PWMD3, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD3, pwm2));
   }
   else {
     functioPtrRightUP = &Destra_Dietro_up;
     functioPtrRightDOWN = &Destra_Dietro_Down;
 
-    pwm2 = 77.95 * velocity[1] + 100;
+    pwm2 = 10000 - 77.95 * velocity[1] + 100;
 
-    pwmEnableChannel(&PWMD3, 0, (pwmcnt_t)pwm2);
+    pwmEnableChannel(&PWMD3, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD3, pwm2));
   }
 
 }

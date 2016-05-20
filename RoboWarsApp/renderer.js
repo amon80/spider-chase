@@ -3,7 +3,7 @@
 // All of the Node.js APIs are available in this process.
 const Gauge  = require('./gauge.min.js');
 const keycode = require('keycode');
-const request = require('request');
+// const request = require('request');
 const controller =  require('./Controller.js')
 
 var remote = require('electron').remote;
@@ -29,6 +29,7 @@ var turn_costant = 5;
 var oldVelocityLeft = velocityLeft;
 var oldVelocityRight = velocityRight;
 var epsilon_axis = 0.2;
+var request = require('sync-request');
 
 function CreateGauge(){
     var opts = {
@@ -132,7 +133,7 @@ function renderGauge() {
 //renderGauge is done outside this function
 function modifyVelocity(pressed){
 
-        console.log(pressed);
+        // console.log(pressed);
 	//a accelerates forward, b sets a fixed speed (cruise control), y is hand brake and x accelerates backward
 	
 	if (pressed == 'y') {
@@ -238,13 +239,13 @@ function ReadKeyboard(){
 }
 
 //... while controller needs polling
-setInterval(ReadController, 100);
+setInterval(ReadController, 200);
 function ReadController(){
 	var button = remote.getGlobal('sharedObj').button;
 	var axis = remote.getGlobal('sharedObj').axis;
 	//check buttons
 	if(button!=null){
-		console.log(remote.getGlobal('sharedObj').button);
+		// console.log(remote.getGlobal('sharedObj').button);
 		document.getElementById("type").src="./img/xboxPad.jpg";
 		modifyVelocity(dict[button]);
 	}
@@ -309,12 +310,8 @@ function SendPackage(){
 		stri = "m0128128"
 
 	// console.log(stri);
-	request
-		.get('http://192.168.4.1/?c='+stri)
-		.on('response', function(response) {
-			console.log(response.statusCode) // 200 
-			console.log(response.headers['content-type']) // 'image/png' 
-	})
+	var res = request('GET', 'http://192.168.4.1/?c='+stri);
+	console.log(res.getBody());
 }
 
 function pad(n, width, z) {
