@@ -24,42 +24,42 @@ static struct Mapping_GPIO {
 } mapping;
 
 static void Sinistra_Avanti_up() {
-  palClearPad(mapping.type2, mapping.port2);
+  //palClearPad(mapping.type2, mapping.port2);
   palSetPad(mapping.type1, mapping.port1);
 }
 
 static void Sinistra_Avanti_Down() {
-  palClearPad(mapping.type2, mapping.port2);
+  //palClearPad(mapping.type2, mapping.port2);
   palClearPad(mapping.type1, mapping.port1);
 }
 
 static void Sinistra_Dietro_up() {
-  palClearPad(mapping.type1, mapping.port1);
+  //palClearPad(mapping.type1, mapping.port1);
   palSetPad(mapping.type2, mapping.port2);
 }
 
 static void Sinistra_Dietro_Down() {
-  palClearPad(mapping.type1, mapping.port1);
+  //palClearPad(mapping.type1, mapping.port1);
   palClearPad(mapping.type2, mapping.port2);
 }
 
 static void Destra_Avanti_up() {
   palSetPad(mapping.type3, mapping.port3);
-  palClearPad(mapping.type4, mapping.port4);
+  //palClearPad(mapping.type4, mapping.port4);
 }
 
 static void Destra_Avanti_Down() {
   palClearPad(mapping.type3, mapping.port3);
-  palClearPad(mapping.type4, mapping.port4);
+  //palClearPad(mapping.type4, mapping.port4);
 }
 
 static void Destra_Dietro_up() {
-  palClearPad(mapping.type3, mapping.port3);
+  //palClearPad(mapping.type3, mapping.port3);
   palSetPad(mapping.type4, mapping.port4);
 }
 
 static void Destra_Dietro_Down() {
-  palClearPad(mapping.type3, mapping.port3);
+  //palClearPad(mapping.type3, mapping.port3);
   palClearPad(mapping.type4, mapping.port4);
 }
 
@@ -87,6 +87,14 @@ static void pwm2c1cb(PWMDriver *pwmp) {
 
   (void)pwmp;
   (*functioPtrRightUP)();
+}
+
+static void clearAllPads(){
+	  palClearPad(mapping.type1, mapping.port1);
+	  palClearPad(mapping.type2, mapping.port2);
+	  palClearPad(mapping.type3, mapping.port3);
+	  palClearPad(mapping.type4, mapping.port4);
+
 }
 
 //configuration for left engine
@@ -257,6 +265,7 @@ void control_motor(char* command) {
 
   if (velocity[0] >= 128) {
     velocity[0] = velocity[0] - 128;    //[0-127]
+    clearAllPads();
     functioPtrLeftUP = &Sinistra_Avanti_up;
     functioPtrLeftDOWN = &Sinistra_Avanti_Down;
 
@@ -265,16 +274,18 @@ void control_motor(char* command) {
     pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, pwm1));
   }
   else {    //<128
+	clearAllPads();
     functioPtrLeftUP = &Sinistra_Dietro_up;
     functioPtrLeftDOWN = &Sinistra_Dietro_Down;
 
-    pwm1 = 10000 - 77.95 * velocity[0] + 100;
+    pwm1 = 77.95 * velocity[0] + 100;
 
     pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, pwm1));
   }
 
   if (velocity[1] >= 128) {
     velocity[1] = velocity[1] - 128;    //[0-127]
+    clearAllPads();
     functioPtrRightUP = &Destra_Avanti_up;
     functioPtrRightDOWN = &Destra_Avanti_Down;
 
@@ -283,10 +294,11 @@ void control_motor(char* command) {
     pwmEnableChannel(&PWMD3, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD3, pwm2));
   }
   else {
+	clearAllPads();
     functioPtrRightUP = &Destra_Dietro_up;
     functioPtrRightDOWN = &Destra_Dietro_Down;
 
-    pwm2 = 10000 - 77.95 * velocity[1] + 100;
+    pwm2 = 77.95 * velocity[1] + 100;
 
     pwmEnableChannel(&PWMD3, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD3, pwm2));
   }
