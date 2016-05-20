@@ -302,15 +302,15 @@ function ReadController(){
 
 function SendPackage(){
 	if(state == -1)//if retro
-		stri = "m0"+pad(maxValue-velocityLeft,3)+""+pad(maxValue-velocityRight,3);
+		stri = "m0"+pad(velocityLeft,3)+""+pad(velocityRight,3);
 	else if(state == 1)
 		stri = "m0"+pad(maxValue+velocityLeft+1,3)+""+pad(maxValue+velocityRight+1,3);
 	else
 		stri = "m0128128"
 
-	console.log(stri);
+	// console.log(stri);
 	request
-		.get('http://127.0.0.1:2222?c='+stri)
+		.get('http://192.168.4.1/?c='+stri)
 		.on('response', function(response) {
 			console.log(response.statusCode) // 200 
 			console.log(response.headers['content-type']) // 'image/png' 
