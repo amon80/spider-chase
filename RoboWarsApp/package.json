@@ -8,7 +8,6 @@
   },
   "devDependencies": {
     "electron-prebuilt": "1.0.1",
-    "keycode": "2.1.1",
-    "sync-request" : "3.0.1" 
+    "keycode": "2.1.1"
   }
 }

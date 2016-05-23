@@ -29,7 +29,6 @@ var turn_costant = 5;
 var oldVelocityLeft = velocityLeft;
 var oldVelocityRight = velocityRight;
 var epsilon_axis = 0.2;
-var request = require('sync-request');
 
 function CreateGauge(){
     var opts = {
@@ -295,7 +294,7 @@ function ReadController(){
 	renderGauge();
 	//if speeds are different(caused by acceleration, deceleration or turning), send a package to robot
 	if (velocityLeft != oldVelocityLeft || velocityRight != oldVelocityRight) {
-		//SendPackage();
+		SendPackage();
 		oldVelocityLeft = velocityLeft;
 		oldVelocityRight = velocityRight;
 	}
@@ -321,12 +320,13 @@ function SendPackage(){
 
 	var cp = require('child_process');
 
-	var ls = cp.spawnSync('curl', ['http://192.168.4.1/?c='+stri], { encoding : 'utf8' });
+	var ls = cp.spawnSync('curl', ["-m 2" ,'http://192.168.4.1/?c='+stri], { encoding : 'utf8' });
 	// uncomment the following if you want to see everything returned by the spawnSync command
-	// console.log('ls: ' , ls);
+	console.log('ls: ' , ls);
 	console.log('stdout here: \n' + ls.stdout);
+	/*
 	var res = request('GET', 'http://192.168.4.1/?c='+stri);
-	console.log(res.getBody());
+	console.log(res.getBody());*/
 }
 
 function pad(n, width, z) {
