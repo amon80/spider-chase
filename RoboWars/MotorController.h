@@ -173,13 +173,15 @@ void init_motor() {
   //start pwm1 (left engine)
   pwmStart(&PWMD1, &pwm1cfg);
   pwmEnablePeriodicNotification(&PWMD1);
-  pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 5000));
+  //Start pwm, but hold still
+  pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 10000));
   pwmEnableChannelNotification(&PWMD1, 0);
 
   //start pwm2 (right engine)
   pwmStart(&PWMD3, &pwm2cfg);
   pwmEnablePeriodicNotification(&PWMD3);
-  pwmEnableChannel(&PWMD3, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD3, 5000));
+  //Start pwm, but hold still
+  pwmEnableChannel(&PWMD3, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD3, 10000));
   pwmEnableChannelNotification(&PWMD3, 0);
 }
 
