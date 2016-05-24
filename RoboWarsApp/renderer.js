@@ -7,6 +7,7 @@ const keycode = require('keycode');
 const controller =  require('./Controller.js')
 
 var remote = require('electron').remote;
+var IP =remote.getGlobal('sharedObj').IP
 
 //dict maps numbers corrisponding to controller into directions and/or labels
 //a accelerates forward, b does nothing, y is hand brake and x accelerates backward
@@ -320,7 +321,7 @@ function SendPackage(){
 
 	var cp = require('child_process');
 
-	var ls = cp.spawnSync('curl', ["-m 2" ,'http://192.168.4.1/?c='+stri], { encoding : 'utf8' });
+	var ls = cp.spawnSync('curl', ["-m 2" ,'http://'+IP+'/?c='+stri], { encoding : 'utf8' });
 	// uncomment the following if you want to see everything returned by the spawnSync command
 	console.log('ls: ' , ls);
 	console.log('stdout here: \n' + ls.stdout);
