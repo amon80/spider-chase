@@ -115,7 +115,7 @@ static msg_t Uart1EVT_Thread(void *p) {
         }
         if (request == 'c')
           control_motor(command);
-        printWebPage();
+        //printWebPage();
       }
       /***********END************/
       pos = 0;
@@ -253,8 +253,11 @@ char *strcpy(char *dest, const char *src){
   dest[i] = '\0';
   return dest;
 }
+
+//Given str and targetF
 char* StrStr(const char *str, const char *target) {
-  if (!*target) return str;
+  if (!*target)
+	  return str;
   char *p1 = (char*)str, *p2 = (char*)target;
   char *p1Adv = (char*)str;
   while (*++p2)
