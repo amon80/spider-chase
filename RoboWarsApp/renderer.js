@@ -19,7 +19,7 @@ var velocityLeft = 0;
 var velocityRight = 0;
 var maxValue = 127;
 var minValue = 1;
-var accelerationIncrement = 5;
+var accelerationIncrement = 50;
 var brakeIncrement = accelerationIncrement;
 var naturalSpeedIncrement = accelerationIncrement/5;
 var cruiseControl = false;
@@ -29,7 +29,6 @@ var turn_costant = 5;
 var oldVelocityLeft = velocityLeft;
 var oldVelocityRight = velocityRight;
 var epsilon_axis = 0.2;
-var request = require('sync-request');
 
 function CreateGauge(){
     var opts = {
@@ -248,7 +247,7 @@ function ReadController(){
 		// console.log(remote.getGlobal('sharedObj').button);
 		document.getElementById("type").src="./img/xboxPad.jpg";
 		modifyVelocity(dict[button]);
-	}
+	}/*
 	else{//slowly decrease velocity based on actual status
 		if(!cruiseControl){
 			if(velocityLeft-naturalSpeedIncrement>= minValue){
@@ -267,7 +266,7 @@ function ReadController(){
 				state = 0;
 			}
 		}
-	}
+	}*/
 	//check axis
 	if(axis){
 		// console.log(axis);
@@ -310,8 +309,24 @@ function SendPackage(){
 		stri = "m0128128"
 
 	// console.log(stri);
+	/*request
+		.get('http://192.168.4.1/?c='+stri)
+		.on('response', function(response) {
+			//console.log(response.statusCode) // 200 
+			//console.log(response.headers['content-type']) // 'image/png' 
+			console.log(response)
+	})*/
+	// or more concisely
+
+	var cp = require('child_process');
+
+	var ls = cp.spawnSync('curl', ["-m 2" ,'http://192.168.4.1/?c='+stri], { encoding : 'utf8' });
+	// uncomment the following if you want to see everything returned by the spawnSync command
+	console.log('ls: ' , ls);
+	console.log('stdout here: \n' + ls.stdout);
+	/*
 	var res = request('GET', 'http://192.168.4.1/?c='+stri);
-	console.log(res.getBody());
+	console.log(res.getBody());*/
 }
 
 function pad(n, width, z) {
