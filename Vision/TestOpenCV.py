@@ -19,9 +19,24 @@ if __name__ == '__main__':
 
 # define the lower and upper boundaries of the "green"
 # ball in the HSV color space
-greenLower = (20, 100, 100)
-greenUpper = (30, 255, 255)
- 
+first = np.uint8([[[0,120,255]]])
+second = np.uint8([[[68,190,35]]])
+
+
+
+firstHSV = cv2.cvtColor(first,cv2.COLOR_BGR2HSV)
+firstLower = np.array((firstHSV[0][0][0]-10,100,100))
+firstUpper = np.array((firstHSV[0][0][0]+10,255,255))
+print(firstLower)
+print(firstUpper) 
+
+secondHSV = cv2.cvtColor(second,cv2.COLOR_BGR2HSV)
+secondLower = np.array((secondHSV[0][0][0]-10,100,100))
+secondUpper = np.array((secondHSV[0][0][0]+10,255,255))
+print(secondLower)
+print(secondUpper)
+
+
 # initialize the list of tracked points, the frame counter,
 # and the coordinate deltas
 pts = deque(maxlen=args["buffer"])
@@ -60,8 +75,8 @@ while True:
     # construct a mask for the color "green", then perform
     # a series of dilations and erosions to remove any small
     # blobs left in the mask
-    mask = cv2.inRange(hsv, greenLower, greenUpper)
-    mask = cv2.erode(mask, None, iterations=2)
+    mask = cv2.inRange(hsv, secondLower, secondUpper)
+    mask = cv2.erode(mask, None, iterations=3)
     mask = cv2.dilate(mask, None, iterations=2)
  
     cv2.imshow("mask",cv2.bitwise_and(hsv,hsv,mask=mask));
