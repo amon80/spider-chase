@@ -131,10 +131,10 @@ class Vision:
 
 
 	#dati due punti restituisce la matrice omogenea di rototraslazione
-	def calculate_matrix(self, p0, p1):
+	def calculate_matrix(self, p0, p1, versor=[1,0]):
 
 		vet_diff = p1 - p0
-		x_axis = np.array([1,0])
+		x_axis = np.array(versor)
 		dot_product = np.dot(vet_diff,x_axis)
 		module = np.linalg.norm(vet_diff)
 		cos_arg = dot_product/module
@@ -162,7 +162,11 @@ if __name__ == '__main__':
 		second_matrix = g.get_Spider(g.s_s_c1Lower, g.s_s_c1Upper, g.s_s_c2Lower, g.s_s_c2Upper)
 
 		if not first_matrix==None and not second_matrix==None:
+			#print(first_matrix, second_matrix)
+
 			p0 = [first_matrix[0][2], first_matrix[1][2]]
 			p1 = [second_matrix[0][2], second_matrix[1][2]]
-			print(g.calculate_matrix(np.array(p0),np.array(p1)))
-
+			new_matrix_x= g.calculate_matrix(np.array(p0),np.array(p1))
+			new_matrix_y= g.calculate_matrix(np.array(p0),np.array(p1),[0,1])
+			cos_x = new_matrix_x[0][0]
+			cos_y = new_matrix_y[0][0]
