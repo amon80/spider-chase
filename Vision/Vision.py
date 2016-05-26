@@ -14,12 +14,17 @@ class Vision:
 		#arancione
 		self.first_spider_color1 = np.uint8([[[0,120,255]]])
 		#verde
-		self.first_spider_color2 = np.uint8([[[68,190,35]]])
+		#self.first_spider_color2 = np.uint8([[[68,190,35]]])
+		#fucsia
+		self.first_spider_color2 = np.uint8([[[180,95,245]]])
 
 		#azzurro
-		self.second_spider_color1 = np.uint8([[[255,255,90]]])
+		#self.second_spider_color1 = np.uint8([[[255,235,12]]])
+		#rosso
+		self.second_spider_color1 = np.uint8([[[78,63,223]]])
 		#giallo
 		self.second_spider_color2 = np.uint8([[[0,255,255]]])
+		
 
 		f_s_c1HSV = cv2.cvtColor(self.first_spider_color1,cv2.COLOR_BGR2HSV)
 		self.f_s_c1Lower = np.array((f_s_c1HSV[0][0][0]-10,100,100))
@@ -130,7 +135,14 @@ class Vision:
 		if f_x and f_y and s_x and s_y:
 			p0 = np.array([f_x,f_y])
 			p1 = np.array([s_x,s_y])
-			return self.calculate_matrix(p0,p1)
+			
+			points = dict()
+
+			points["p0"] = p0
+			points["p1"] = p1
+
+			return [points, self.calculate_matrix(p0,p1)]
+
 
 	def get_Spider_Inseguitore(self, color1Lower, color1Upper):
 
@@ -227,13 +239,16 @@ if __name__ == '__main__':
 
 	g = Vision()
 	while True:
-		first_matrix = g.get_Spider(g.f_s_c1Lower, g.f_s_c1Upper, g.f_s_c2Lower, g.f_s_c2Upper)
+		returns = g.get_Spider(g.f_s_c1Lower, g.f_s_c1Upper, g.f_s_c2Lower, g.f_s_c2Upper)
 		point = g.get_Spider_Inseguitore(g.s_s_c1Lower, g.s_s_c1Upper)
 
-		if not first_matrix == None and not point == None :
+		if returns is not None and point is not None and returns[0] is not None and returns[1] is not None:
 			#print(first_matrix, second_matrix)
 
 			#print(first_matrix[0][0])
+
+			points = returns[0]
+			first_matrix = returns[1]
 
 			p0 = [first_matrix[0][2], first_matrix[1][2]]
 			p1 = point
@@ -247,63 +262,126 @@ if __name__ == '__main__':
 			#print("Coseno rispetto X: "+ str(cos_x))
 			#print("Coseno rispetto Y: "+ str(cos_y))
 
-			epsilon_rot = 0.5
+			#epsilon di rotazione del robot rispetto alla telecamera
+			epsilon_rot_robot = 0.8
+			#epsilon di rotazione dell'avversario rispetto al robot
+			epsilon_rot_enemy = 0.5
+			#epsilon di rotazione dell'avversario rispetto al robot rispetto all'asse y
 			epsilon_fron = 0.5
-			#oggetto a destra
+			#epsilon di stop
+			epsilon_stop = 150
 
 			diff = np.linalg.norm(p1-p0, ord = 2)
+
 			print(diff)
-			if diff < 150:
+			if diff < epsilon_stop:
 				print("FERMATIIIIIIIII")
 				p = Process(target=launch_curl,args=('128128', ))
 				p.start()
 				continue
 
-			print(first_matrix[0][0])
 
-			if abs(first_matrix[0][0]) <= epsilon_rot:
+			if abs(first_matrix[0][0]) <= epsilon_rot_robot:
 
-				if cos_x > epsilon_rot:
-					print("Vai a Sinistra____1")
-					#p = Process(target=launch_curl,args=('000255', ))
-					#p.start()
-					continue
-				elif cos_x < -epsilon_rot:
-					print("Vai a Destra____1")
-					#p = Process(target=launch_curl,args=('255000', ))
-					#p.start()
-					continue
-					
-				if cos_y > epsilon_fron:
-					#p = Process(target=launch_curl,args=('000000', ))
-					#p.start()
-					print("Vai a Avanti_____1")
-				elif cos_y < -epsilon_fron:
-					#p = Process(target=launch_curl,args=('255255', ))
-					#p.start()
-					print("Vai a Indietro____1")
-					
-			else:
 
-				if cos_x > epsilon_rot:
-					print("Vai a Avanti_____2")
-					#p = Process(target=launch_curl,args=('255255', ))
-					#p.start()
-					continue
-				elif cos_x < -epsilon_rot:
-					print("Vai a Indietro______2")
-					#p = Process(target=launch_curl,args=('000000', ))
-					#p.start()
-					continue
+				diff = points["p0"] - points["p1"]
 				
-				if cos_y > epsilon_fron:
-					#p = Process(target=launch_curl,args=('000255', ))
-					#p.start()
-					print("Vai a Destra____2")
-				elif cos_y < -epsilon_fron:
-					#p = Process(target=launch_curl,args=('255000', ))
-					#p.start()
-					print("Vai a Sinistra____2")
+				if diff[1] < 0:
+					print("Arancione Davanti")
+
+					if cos_x > epsilon_rot_enemy:
+						print("Vai a Destra__Verticale__Arancione")
+						p = Process(target=launch_curl,args=('000255', ))
+						p.start()
+						continue
+					elif cos_x < -epsilon_rot_enemy:
+						print("Vai a Sinistra__Verticale__Arancione")
+						p = Process(target=launch_curl,args=('255000', ))
+						p.start()
+						continue
+					
+					if cos_y > epsilon_fron:
+						print("Vai a Indietro__Verticale__Arancione")	
+						p = Process(target=launch_curl,args=('000000', ))
+						p.start()
+						continue
+					elif cos_y < -epsilon_fron:
+						print("Vai a Avanti__Verticale__Arancione")
+						p = Process(target=launch_curl,args=('255255', ))
+						p.start()
+						continue
+				else:
+					print("Verde Davanti")
+					if cos_x > epsilon_rot_enemy:
+						print("Vai a Sinistra__Verticale__Arancione")
+						p = Process(target=launch_curl,args=('255000', ))
+						p.start()
+						continue
+					elif cos_x < -epsilon_rot_enemy:
+						print("Vai a Destra__Verticale__Arancione")
+						p = Process(target=launch_curl,args=('000255', ))
+						p.start()
+						continue
+					
+					if cos_y > epsilon_fron:
+						p = Process(target=launch_curl,args=('255255', ))
+						p.start()
+						print("Vai a Avanti__Verticale__Arancione")
+						continue
+					elif cos_y < -epsilon_fron:
+						p = Process(target=launch_curl,args=('000000', ))
+						p.start()
+						print("Vai a Indietro__Verticale__Arancione")
+						continue
+			else:
+				diff = points["p0"] - points["p1"]
+				
+				if diff[0] < 0:
+					print("Arancione Sinistra")
+					if cos_x > epsilon_rot_enemy:
+						print("Vai a Inditro__Orizzontale__Arancione")
+						p = Process(target=launch_curl,args=('000000', ))
+						p.start()
+						continue
+					elif cos_x < -epsilon_rot_enemy:
+						print("Vai a Avanti__Orizzontale__Arancione")
+						p = Process(target=launch_curl,args=('255255', ))
+						p.start()
+						continue
+					
+					if cos_y > epsilon_fron:
+						p = Process(target=launch_curl,args=('255000', ))
+						p.start()
+						print("Vai a Sinistra__Orizzontale__Arancione")
+						continue
+					elif cos_y < -epsilon_fron:
+						p = Process(target=launch_curl,args=('000255', ))
+						p.start()
+						print("Vai a Destra__Orizzontale__Arancione")
+						continue
+				else:
+					print("Verde Sinistra")
+					if cos_x > epsilon_rot_enemy:
+						print("Vai a Avanti__Orizzontale__Verde")
+						p = Process(target=launch_curl,args=('255255', ))
+						p.start()
+						continue
+					elif cos_x < -epsilon_rot_enemy:
+						print("Vai a Indietro__Orizzontale__Arancione")
+						p = Process(target=launch_curl,args=('000000', ))
+						p.start()
+						continue
+					
+					if cos_y > epsilon_fron:
+						p = Process(target=launch_curl,args=('000255', ))
+						p.start()
+						print("Vai a Destra__Orizzontale__Arancione")
+						continue
+					elif cos_y < -epsilon_fron:
+						p = Process(target=launch_curl,args=('255000', ))
+						p.start()
+						print("Vai a Sinistra__Orizzontale__Arancione")
+						continue
 
 
 
