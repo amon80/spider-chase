@@ -11,7 +11,7 @@ var IP =remote.getGlobal('sharedObj').IP
 
 //dict maps numbers corrisponding to controller into directions and/or labels
 //a accelerates forward, b does nothing, y is hand brake and x accelerates backward
-var dict = {"12":"up","13":"down","15":"right","14":"left", "2":"x", "3":"y","0":"a", "1":"b", "7":"a", "6":"x"}
+var dict = {"up":"a","down":"x","15":"right","14":"left", "2":"x", "3":"y","0":"a", "1":"b", "7":"a", "6":"x"}
  
 var retro = false;
 //state = 1 if moving forward, -1 if moving backward, 0 if halted
@@ -233,8 +233,9 @@ function modifyVelocity(pressed){
 //Keyboard can be handled with EventListener...
 function ReadKeyboard(){
     window.addEventListener('keydown', function(e) {
+    	console.log("pressed: " + keycode(e))
         document.getElementById("type").src="./img/KeyBoard.png";
-        modifyVelocity(keycode(e));
+        modifyVelocity(dict[keycode(e)]);
     });
 }
 

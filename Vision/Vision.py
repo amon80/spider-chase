@@ -12,16 +12,16 @@ class Vision:
 	def __init__ (self):
 
 		#arancione
-		self.first_spider_color1 = np.uint8([[[0,120,255]]])
+		self.first_spider_color1 = np.uint8([[[57,114,255]]])
 		#verde
-		#self.first_spider_color2 = np.uint8([[[68,190,35]]])
+		self.first_spider_color2 = np.uint8([[[102,151,49]]])
 		#fucsia
-		self.first_spider_color2 = np.uint8([[[180,95,245]]])
+		#self.first_spider_color2 = np.uint8([[[180,95,245]]])
 
 		#azzurro
-		#self.second_spider_color1 = np.uint8([[[255,235,12]]])
+		self.second_spider_color1 = np.uint8([[[216,145,0]]])
 		#rosso
-		self.second_spider_color1 = np.uint8([[[78,63,223]]])
+		#self.second_spider_color1 = np.uint8([[[78,63,223]]])
 		#giallo
 		self.second_spider_color2 = np.uint8([[[0,255,255]]])
 		
@@ -238,6 +238,9 @@ def launch_curl(string):
 if __name__ == '__main__':
 
 	g = Vision()
+
+	stop = True
+
 	while True:
 		returns = g.get_Spider(g.f_s_c1Lower, g.f_s_c1Upper, g.f_s_c2Lower, g.f_s_c2Upper)
 		point = g.get_Spider_Inseguitore(g.s_s_c1Lower, g.s_s_c1Upper)
@@ -269,20 +272,23 @@ if __name__ == '__main__':
 			#epsilon di rotazione dell'avversario rispetto al robot rispetto all'asse y
 			epsilon_fron = 0.5
 			#epsilon di stop
-			epsilon_stop = 150
+			epsilon_stop = 230
 
 			diff = np.linalg.norm(p1-p0, ord = 2)
 
 			print(diff)
 			if diff < epsilon_stop:
 				print("FERMATIIIIIIIII")
-				p = Process(target=launch_curl,args=('128128', ))
-				p.start()
+				if not stop:
+					stop = True
+					p = Process(target=launch_curl,args=('128128', ))
+					p.start()
+					
 				continue
 
+			stop = False
 
 			if abs(first_matrix[0][0]) <= epsilon_rot_robot:
-
 
 				diff = points["p0"] - points["p1"]
 				
@@ -382,6 +388,17 @@ if __name__ == '__main__':
 						p.start()
 						print("Vai a Sinistra__Orizzontale__Arancione")
 						continue
+
+
+		else:
+
+			print("Missing one of the components")
+			if not stop:
+				stop = True
+				p = Process(target=launch_curl,args=('128128', ))
+				p.start()
+			continue
+
 
 
 
