@@ -240,6 +240,7 @@ if __name__ == '__main__':
 	g = Vision()
 
 	stop = True
+	old_command = "stop"
 
 	while True:
 		returns = g.get_Spider(g.f_s_c1Lower, g.f_s_c1Upper, g.f_s_c2Lower, g.f_s_c2Upper)
@@ -250,6 +251,7 @@ if __name__ == '__main__':
 
 			#print(first_matrix[0][0])
 
+			print (old_command)
 			points = returns[0]
 			first_matrix = returns[1]
 
@@ -276,125 +278,154 @@ if __name__ == '__main__':
 
 			diff = np.linalg.norm(p1-p0, ord = 2)
 
-			print(diff)
+			#print(diff)
 			if diff < epsilon_stop:
-				print("FERMATIIIIIIIII")
-				if not stop:
-					stop = True
+				if old_command != "stop":
+					old_command = "stop"
+					print("FERMATIIIIIIIII")
 					p = Process(target=launch_curl,args=('128128', ))
 					p.start()
 					
 				continue
-
-			stop = False
 
 			if abs(first_matrix[0][0]) <= epsilon_rot_robot:
 
 				diff = points["p0"] - points["p1"]
 				
 				if diff[1] < 0:
-					print("Arancione Davanti")
+					#print("Arancione Davanti")
 
 					if cos_x > epsilon_rot_enemy:
 						print("Vai a Destra__Verticale__Arancione")
-						p = Process(target=launch_curl,args=('000255', ))
-						p.start()
-						continue
+						if old_command != "right":
+							old_command = "right"
+							p = Process(target=launch_curl,args=('000255', ))
+							p.start()
+							continue
 					elif cos_x < -epsilon_rot_enemy:
 						print("Vai a Sinistra__Verticale__Arancione")
-						p = Process(target=launch_curl,args=('255000', ))
-						p.start()
-						continue
+						if old_command != "left":
+							old_command = "left"
+							p = Process(target=launch_curl,args=('255000', ))
+							p.start()
+							continue
 					
 					if cos_y > epsilon_fron:
-						print("Vai a Indietro__Verticale__Arancione")	
-						p = Process(target=launch_curl,args=('000000', ))
-						p.start()
-						continue
-					elif cos_y < -epsilon_fron:
-						print("Vai a Avanti__Verticale__Arancione")
-						p = Process(target=launch_curl,args=('255255', ))
-						p.start()
-						continue
-				else:
-					print("Verde Davanti")
-					if cos_x > epsilon_rot_enemy:
-						print("Vai a Sinistra__Verticale__Arancione")
-						p = Process(target=launch_curl,args=('255000', ))
-						p.start()
-						continue
-					elif cos_x < -epsilon_rot_enemy:
-						print("Vai a Destra__Verticale__Arancione")
-						p = Process(target=launch_curl,args=('000255', ))
-						p.start()
-						continue
-					
-					if cos_y > epsilon_fron:
-						p = Process(target=launch_curl,args=('255255', ))
-						p.start()
-						print("Vai a Avanti__Verticale__Arancione")
-						continue
-					elif cos_y < -epsilon_fron:
-						p = Process(target=launch_curl,args=('000000', ))
-						p.start()
 						print("Vai a Indietro__Verticale__Arancione")
-						continue
+						if old_command != "back":
+							old_command = "back"	
+							p = Process(target=launch_curl,args=('000000', ))
+							p.start()
+							continue
+					elif cos_y < -epsilon_fron:
+						print("Vai a Avanti__Verticale__Arancione")
+						if old_command != "front":
+							old_command = "front"
+							p = Process(target=launch_curl,args=('255255', ))
+							p.start()
+							continue
+				else:
+					#print("Verde Davanti")
+					if cos_x > epsilon_rot_enemy:
+						if old_command != "left":
+							old_command = "left"
+							print("Vai a Sinistra__Verticale__Arancione")
+							p = Process(target=launch_curl,args=('255000', ))
+							p.start()
+							continue
+					elif cos_x < -epsilon_rot_enemy:
+						if old_command != "right":
+							old_command = "right"
+							print("Vai a Destra__Verticale__Arancione")
+							p = Process(target=launch_curl,args=('000255', ))
+							p.start()
+							continue
+					
+					if cos_y > epsilon_fron:
+						if old_command != "front":
+							old_command = "front"
+							p = Process(target=launch_curl,args=('255255', ))
+							p.start()
+							print("Vai a Avanti__Verticale__Arancione")
+							continue
+					elif cos_y < -epsilon_fron:
+						if old_command != "back":
+							old_command = "back"
+							p = Process(target=launch_curl,args=('000000', ))
+							p.start()
+							print("Vai a Indietro__Verticale__Arancione")
+							continue
 			else:
 				diff = points["p0"] - points["p1"]
 				
 				if diff[0] < 0:
-					print("Arancione Sinistra")
+					#print("Arancione Sinistra")
 					if cos_x > epsilon_rot_enemy:
-						print("Vai a Inditro__Orizzontale__Arancione")
-						p = Process(target=launch_curl,args=('000000', ))
-						p.start()
-						continue
+						if old_command != "back":
+							old_command = "back"
+							print("Vai a Indietro__Orizzontale__Arancione")
+							p = Process(target=launch_curl,args=('000000', ))
+							p.start()
+							continue
 					elif cos_x < -epsilon_rot_enemy:
-						print("Vai a Avanti__Orizzontale__Arancione")
-						p = Process(target=launch_curl,args=('255255', ))
-						p.start()
-						continue
+						if old_command != "front":
+							old_command = "front"
+							print("Vai a Avanti__Orizzontale__Arancione")
+							p = Process(target=launch_curl,args=('255255', ))
+							p.start()
+							continue
 					
 					if cos_y > epsilon_fron:
-						p = Process(target=launch_curl,args=('255000', ))
-						p.start()
-						print("Vai a Sinistra__Orizzontale__Arancione")
-						continue
+						if old_command != "left":
+							old_command = "left"
+							p = Process(target=launch_curl,args=('255000', ))
+							p.start()
+							print("Vai a Sinistra__Orizzontale__Arancione")
+							continue
 					elif cos_y < -epsilon_fron:
-						p = Process(target=launch_curl,args=('000255', ))
-						p.start()
-						print("Vai a Destra__Orizzontale__Arancione")
-						continue
+						if old_command != "right":
+							old_command = "right"
+							p = Process(target=launch_curl,args=('000255', ))
+							p.start()
+							print("Vai a Destra__Orizzontale__Arancione")
+							continue
 				else:
-					print("Verde Sinistra")
+					#print("Verde Sinistra")
 					if cos_x > epsilon_rot_enemy:
-						print("Vai a Avanti__Orizzontale__Verde")
-						p = Process(target=launch_curl,args=('255255', ))
-						p.start()
-						continue
+						if old_command != "front":
+							old_command = "front"
+							print("Vai a Avanti__Orizzontale__Verde")
+							p = Process(target=launch_curl,args=('255255', ))
+							p.start()
+							continue
 					elif cos_x < -epsilon_rot_enemy:
-						print("Vai a Indietro__Orizzontale__Arancione")
-						p = Process(target=launch_curl,args=('000000', ))
-						p.start()
-						continue
+						if old_command != "back":
+							old_command = "back"
+							print("Vai a Indietro__Orizzontale__Arancione")
+							p = Process(target=launch_curl,args=('000000', ))
+							p.start()
+							continue
 					
 					if cos_y > epsilon_fron:
-						p = Process(target=launch_curl,args=('000255', ))
-						p.start()
-						print("Vai a Destra__Orizzontale__Arancione")
-						continue
+						if old_command != "right":
+							old_command = "right"
+							p = Process(target=launch_curl,args=('000255', ))
+							p.start()
+							print("Vai a Destra__Orizzontale__Arancione")
+							continue
 					elif cos_y < -epsilon_fron:
-						p = Process(target=launch_curl,args=('255000', ))
-						p.start()
-						print("Vai a Sinistra__Orizzontale__Arancione")
-						continue
+						if old_command != "left":
+							old_command = "left"
+							p = Process(target=launch_curl,args=('255000', ))
+							p.start()
+							print("Vai a Sinistra__Orizzontale__Arancione")
+							continue
 
 
 		else:
-
 			print("Missing one of the components")
-			if not stop:
-				stop = True
+			if old_command != "stop":
+				old_command = "stop"
 				p = Process(target=launch_curl,args=('128128', ))
 				p.start()
 			continue
