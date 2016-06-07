@@ -9,7 +9,7 @@ from multiprocessing import Process
 class Vision:
 	
 
-	def __init__ (self, outputPath):
+	def __init__ (self):
 
 		#arancione
 		self.first_spider_color1 = np.uint8([[[57,114,255]]])
@@ -42,8 +42,21 @@ class Vision:
 		self.s_s_c2Lower = np.array((s_s_c2HSV[0][0][0]-10,100,100))
 		self.s_s_c2Upper = np.array((s_s_c2HSV[0][0][0]+10,255,255))
 
-		self.camera = cv2.VideoCapture(1)
-                self.video_writer = cv2.VideoWriter("output.avi",-1, 25, (900, 900))
+		self.camera = cv2.VideoCapture(0)
+		fps = self.camera.get(cv2.cv.CV_CAP_PROP_FPS)
+		print "Frames per second using video.get(cv2.cv.CV_CAP_PROP_FPS): {0}".format(fps)
+		# video recorder
+		fourcc = cv2.cv.CV_FOURCC('m', 'p', '4', 'v')
+		self.video_writer = cv2.VideoWriter("output.avi", fourcc, 25, (900, 506))
+		if not self.video_writer :
+			print "!!! Failed VideoWriter: invalid parameters"
+			sys.exit(1)
+
+	def close_all(self):
+		# cleanup the camera and close any open windows
+		self.camera.release()
+		self.video_writer.release()
+		cv2.destroyAllWindows()
 
 	def get_Spider(self, color1Lower, color1Upper, color2Lower, color2Upper):
 
@@ -129,10 +142,7 @@ class Vision:
 				cv2.circle(frame, center, 5, (0, 0, 255), -1)
 		
 		cv2.imshow("Frame", frame)
-                self.video_writer.write(frame)
-		key = cv2.waitKey(1) & 0xFF
-		if key == ord("q"):
-			close_all()
+		self.video_writer.write(frame)
 
 		if f_x and f_y and s_x and s_y:
 			p0 = np.array([f_x,f_y])
@@ -202,9 +212,7 @@ class Vision:
 
 		
 		cv2.imshow("Frame", frame)
-		key = cv2.waitKey(1) & 0xFF
-		if key == ord("q"):
-			close_all()
+		self.video_writer.write(frame)
 
 		if f_x and f_y:
 			p1 = np.array([f_x, f_y])
@@ -229,18 +237,13 @@ class Vision:
 		#print(matrix)
 		return matrix
 
-	def close_all():
-		# cleanup the camera and close any open windows
-		self.camera.release()
-                self.video_writer.release()
-		cv2.destroyAllWindows()
 
 def launch_curl(string):
 	subprocess.call("curl -m 1 http://192.168.4.1/?c=m0"+string, shell=True)
 
 if __name__ == '__main__':
 
-	g = Vision('output')
+	g = Vision()
 
 	stop = True
 	old_command = "stop"
@@ -248,6 +251,12 @@ if __name__ == '__main__':
 	while True:
 		returns = g.get_Spider(g.f_s_c1Lower, g.f_s_c1Upper, g.f_s_c2Lower, g.f_s_c2Upper)
 		point = g.get_Spider_Inseguitore(g.s_s_c1Lower, g.s_s_c1Upper)
+
+		key = cv2.waitKey(1) & 0xFF
+		if key == ord("q"):
+			g.close_all()
+			print("BYEEEEE")
+			break
 
 		if returns is not None and point is not None and returns[0] is not None and returns[1] is not None:
 			#print(first_matrix, second_matrix)
