@@ -9,7 +9,7 @@ from multiprocessing import Process
 class Vision:
 	
 
-	def __init__ (self):
+	def __init__ (self, outputPath):
 
 		#arancione
 		self.first_spider_color1 = np.uint8([[[57,114,255]]])
@@ -43,6 +43,7 @@ class Vision:
 		self.s_s_c2Upper = np.array((s_s_c2HSV[0][0][0]+10,255,255))
 
 		self.camera = cv2.VideoCapture(1)
+                self.video_writer = cv2.VideoWriter("output.avi",-1, 25, (900, 900))
 
 	def get_Spider(self, color1Lower, color1Upper, color2Lower, color2Upper):
 
@@ -72,7 +73,7 @@ class Vision:
 		mask = cv2.erode(mask, None, iterations=3)
 		mask = cv2.dilate(mask, None, iterations=2)
 
-		cv2.imshow("mask1",cv2.bitwise_and(hsv,hsv,mask=mask));
+		# cv2.imshow("mask1",cv2.bitwise_and(hsv,hsv,mask=mask));
 
 		# find contours in the mask and initialize the current
 		# (x, y) center of the ball
@@ -102,7 +103,7 @@ class Vision:
 		mask = cv2.erode(mask, None, iterations=3)
 		mask = cv2.dilate(mask, None, iterations=2)
 
-		cv2.imshow("mask2",cv2.bitwise_and(hsv,hsv,mask=mask));
+		# cv2.imshow("mask2",cv2.bitwise_and(hsv,hsv,mask=mask));
 
 		# find contours in the mask and initialize the current
 		# (x, y) center of the ball
@@ -128,6 +129,7 @@ class Vision:
 				cv2.circle(frame, center, 5, (0, 0, 255), -1)
 		
 		cv2.imshow("Frame", frame)
+                self.video_writer.write(frame)
 		key = cv2.waitKey(1) & 0xFF
 		if key == ord("q"):
 			close_all()
@@ -163,7 +165,7 @@ class Vision:
 		blurred = cv2.GaussianBlur(frame, (11, 11), 0)
 		#cv2.imshow("Blurred", blurred)
 		hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-		cv2.imshow("hsv", hsv)
+		# cv2.imshow("hsv", hsv)
 
 		# construct a mask for the color "green", then perform
 		# a series of dilations and erosions to remove any small
@@ -172,7 +174,7 @@ class Vision:
 		mask = cv2.erode(mask, None, iterations=3)
 		mask = cv2.dilate(mask, None, iterations=2)
 
-		cv2.imshow("mask1",cv2.bitwise_and(hsv,hsv,mask=mask));
+		# cv2.imshow("mask1",cv2.bitwise_and(hsv,hsv,mask=mask));
 
 		# find contours in the mask and initialize the current
 		# (x, y) center of the ball
@@ -230,6 +232,7 @@ class Vision:
 	def close_all():
 		# cleanup the camera and close any open windows
 		self.camera.release()
+                self.video_writer.release()
 		cv2.destroyAllWindows()
 
 def launch_curl(string):
@@ -237,7 +240,7 @@ def launch_curl(string):
 
 if __name__ == '__main__':
 
-	g = Vision()
+	g = Vision('output')
 
 	stop = True
 	old_command = "stop"
