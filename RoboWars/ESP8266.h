@@ -1,6 +1,3 @@
-/**
- * @author Simone Romano - s.romano1992@gmail.com
- */
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
@@ -9,7 +6,7 @@
 #define EOF '\377'
 #define WIFI_SERIAL &SD1
 #define MONITOR_SERIAL &SD2
-#define MAX_LENGTH  100 //lunghezza max messaggi trasmessi dal modulo WiFi, si potrebbe ridurre
+#define MAX_LENGTH  100
 #define TIME_IMMEDIATE  ((systime_t)0)
 #define MSG_TIMEOUT (msg_t)-1
 #define Q_TIMEOUT   MSG_TIMEOUT
@@ -32,7 +29,7 @@ int strlen(const char * str);
 void itoa(int n, char s[]);
 void reverse(char s[]);
 
-static SerialConfig uartCfgWiFi = {115200, // bit rate
+static SerialConfig uartCfgWiFi = {115200,
     };
 
 static char* ESP8266_HELLO = "AT\r\n";
@@ -41,22 +38,20 @@ static char* ESP8266_LIST_WIFI = "AT+CWLAP\r\n";
 static char* ESP8266_CONNECT_TO_WIFI =
     "AT+CWJAP=\"Romano Wi-Fi\",\"160462160867\"\r\n";
 static char* ESP8266_CHECK_IP = "AT+CIFSR\r\n";
-static char* ESP8266_GET_IP_ADD = "AT+CIFSR\r\n"; // get ip address
+static char* ESP8266_GET_IP_ADD = "AT+CIFSR\r\n";
 static char* ESP8266_CHECK_VERSION = "AT+GMR\r\n";
 static char* ESP8266_MULTIPLE_CONNECTION = "AT+CIPMUX=1\r\n";
 static char* ESP8266_START_SERVER = "AT+CIPSERVER=1,80\r\n";
-static char* ESP8266_SET_AS_ACCESS_POINT = "AT+CWMODE=2\r\n"; // configura come access point
+static char* ESP8266_SET_AS_ACCESS_POINT = "AT+CWMODE=2\r\n";
 static char* ESP8266_SET_AS_CLIENT = "AT+CWMODE=1\r\n";
 static char* ESP8266_SEND_TCP_DATA = "AT+CIPSEND=";
 static char* ESP8266_CLOSE_CONN = "AT+CIPCLOSE=";
 char clientID[2];
-char command[9];    //could be "M023120" for: motor left to 23 and motor right to 120
-                    //else could be "PXXYY____" for position is xx yy
+char command[9];
 char request;
 static THD_WORKING_AREA(waThread1, 2048);
-/**
- * Asynchronous serial SD1
- */
+
+
 static msg_t Uart1EVT_Thread(void *p) {
   int letterAfterPlus = 0;
   int spaceAfterD = 0;
@@ -90,14 +85,14 @@ static msg_t Uart1EVT_Thread(void *p) {
         }
       } while (charbuf != Q_TIMEOUT );
       received[pos] = '\0';
-      /***********DO SOMETHING WITH RECEIVED MESSAGE************/
-      char* clearRequest = StrStr(received, "+IPD"); //HTTP REQUEST
+
+      char* clearRequest = StrStr(received, "+IPD");
       if (StrStr(received, "+IPD") != NULL){
         if (DEBUG)
           chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s", "Received http request");
         clientID[0] = clearRequest[5];
         clientID[1] = '\0';
-        request = clearRequest[16]; //it is c for command (c=M0...)
+        request = clearRequest[16];
         command[0] = clearRequest[18];
         command[1] = clearRequest[19];
         command[2] = clearRequest[20];
@@ -117,7 +112,7 @@ static msg_t Uart1EVT_Thread(void *p) {
           control_motor(command);
         //printWebPage();
       }
-      /***********END************/
+
       pos = 0;
     }
   }
@@ -129,20 +124,6 @@ void blinkBoardLed() {
   palClearPad(GPIOA, GPIOA_LED_GREEN);
 }
 
-/**
- * This function set the ESP8266 (connected to serial SD1)
- * as access point and start a server on port 80.
- * It will be ready to accept http request.
- * NOTE: first to call this function, be sure that:
- *  -you started serial SD2 to read response and debug
- *  -you started serial SD1 to send request to ESP8266
- * The code:
- * sdStart(MONITOR_SERIAL, &uartCfgMonitor);
- * palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));
- * palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));
- * sdStart(WIFI_SERIAL, &uartCfgWiFi);
- * ESP8266_setAsAP();
- */
 void ESP8266_setAsAP(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Uart1EVT_Thread,
                     NULL);
@@ -153,21 +134,6 @@ void ESP8266_setAsAP(void) {
   sendToESP8266(ESP8266_START_SERVER, COMMAND_SLEEP);
 }
 
-/**
- * This function set the ESP8266 (connected to serial SD1)
- * as a client to the wifi connection defined in command
- * ESP8266_CONNECT_TO_WIFI and start a server on port 80.
- * It will be ready to accept http request.
- * NOTE: first to call this function, be sure that:
- *  -you started serial SD2 to read response and debug
- *  -you started serial SD1 to send request to ESP8266
- * The code:
- * sdStart(MONITOR_SERIAL, &uartCfgMonitor);
- * palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));
- * palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));
- * sdStart(WIFI_SERIAL, &uartCfgWiFi);
- * ESP8266_setAsClient();
- */
 void ESP8266_setAsClient(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Uart1EVT_Thread,
                     NULL);
@@ -189,20 +155,12 @@ int mystrlen(char* text) {
   }
 }
 
-/**
- * This function send a command on serial port SD1 to
- * ESP8266. You can listen for the response by calling
- * readAndPrintResponse() function.
- */
+
 void sendToESP8266(char* command, int delay) {
   chprintf((BaseChannel *)WIFI_SERIAL, command);
   chThdSleepMilliseconds(delay);
 }
 
-/**
- * This method reads input from SD1 and print on Serial usb
- * monitor (SD2).
- */
 void readAndPrintResponse() {
   char buff[1];
   int pos = 0;
@@ -237,9 +195,6 @@ void printWebPage() {
   sendToESP8266(command, COMMAND_SLEEP);
 }
 
-/**
- * Return length of str as char (es. '47')
- */
 int strlen(const char * str){
     int len;
     for (len = 0; str[len]; len++);
@@ -254,7 +209,6 @@ char *strcpy(char *dest, const char *src){
   return dest;
 }
 
-//Given str and targetF
 char* StrStr(const char *str, const char *target) {
   if (!*target)
 	  return str;
@@ -293,22 +247,20 @@ static void println(char *p) {
   chSequentialStreamWrite(MONITOR_SERIAL, (uint8_t * )"\r\n", 2);
 }
 
-/* itoa:  convert n to characters in s */
  void itoa(int n, char s[]){
      int i, sign;
-     if ((sign = n) < 0)  /* record sign */
-         n = -n;          /* make n positive */
+     if ((sign = n) < 0)
+         n = -n;
      i = 0;
-     do {       /* generate digits in reverse order */
-         s[i++] = n % 10 + '0';   /* get next digit */
-     } while ((n /= 10) > 0);     /* delete it */
+     do {
+         s[i++] = n % 10 + '0';
+     } while ((n /= 10) > 0);
      if (sign < 0)
          s[i++] = '-';
      s[i] = '\0';
      reverse(s);
  }
 
- /* reverse:  reverse string s in place */
 void reverse(char s[]){
     int i, j;
     char c;

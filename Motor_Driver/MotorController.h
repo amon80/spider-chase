@@ -186,7 +186,7 @@ void init_motor(){
 	pwmEnableChannelNotification(&PWMD1, 0);
 	//chThdSleepMilliseconds(1000);
 
-	//start pwm2 (right engine)
+	//start pwm3 (right engine)
 	pwmStart(&PWMD3, &pwm2cfg);
 	pwmEnablePeriodicNotification(&PWMD3);
 	pwmEnableChannelNotification(&PWMD3, 0);
