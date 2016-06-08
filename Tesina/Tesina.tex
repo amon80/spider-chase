@@ -163,25 +163,27 @@ Bench\'e questa semplice soluzione sia sufficiente a far muovere il ragno avanti
 \end{center}
 \subsection{STM32F401RE Nucleo}
 La board Nucleo STM32 fornisce un'infrastruttura affidabile e flessibile per gli utenti che vogliono sperimentare nuove idee e prototipi che funzionino con tutte la linea di microcontrollori STM32. Grazie al supporto per la connettivit\'a Arduino e ST Morpho, \'e possibile espandere le funzionalit\'a del microcontrollore scegliendo da una vasta gamma di shield. Inoltre, la STM32 nucleo non richiede due ingressi separati per alimentazione e debugging.
-
-\subsection{Driver motore}
-Il driver del motore utilizzato \'e il modello mostrato in figura. 
 \begin{center}
-Figura Driver
+\includegraphics[keepaspectratio, width=200pt]{Images/STM32.png}
+\end{center}
+\subsection{Driver motore}
+Il driver del motore utilizzato \'e il modello L9110s mostrato in figura. 
+\begin{center}
+\includegraphics[keepaspectratio, width=200pt]{Images/motor_driver.png}
 \end{center}
 Dei suoi 10 pin totali, 4 sono di input e 4 di output, 1 di alimentazione e 1 di massa. Quelli in entrata vanno collegati agli output digitali della board, mentre di quelli in uscita 2 sono per il motore destro e 2 per quello sinistro, di cui 1 va all'alimentazione del motore ed uno alla massa. La regolazione della velocit\'a del motore \'e molto semplice e si basa sui PWM che sono collegati agli output digitali della board: se la frequenza del PWM  che arriva all'ingresso 1 \'e maggiore di quella che arriva all'ingresso 2, allora il ragno va in avanti, altrimenti va all'indietro. Maggiore \'e la differenza di, pi\'u il ragno va velocemente.
 
 \subsection{Modulo wireless}
-Il modulo wireless utilizzato \'e il modello mostrato in figura. 
+Il modulo wireless utilizzato \'e il modello  mostrato in figura. 
 \begin{center}
-Figura Modulo
+gayyyy
 \end{center}
 I suoi pin si collegano, oltre che all'alimentazione ed alla massa, agli ingressi seriali della board. La comunicazione seriale ci ha consentito di comunicare in maniera molto semplice con il modulo, grazie anche agli esempi forniti dalle funzioni di base di ChiBiOs. Il modulo lavora principalmente nello strato di rete, in quanto pu\'o funzionare sia come client che come access point. Inoltre, se impostato come access point, lavora anche nello strato delle applicazioni, in quanto riconosce richieste HTTP di tipo sia GET che POST. Nel nostro caso, abbiamo fatto creare al modulo una rete WiFi, e per mandare messaggi al ragno \'e sufficiente mandare richieste GET tramite browser oppure curl una volta connessi alla rete creata dal modulo.
 
 \subsection{Visione Artificiale e logiche di inseguimento}
 Per il modulo di visione artificiale, abbiamo utilizzato lo standard \textit{de facto} nel campo, \textbf{opencv}. Il modulo \'e stato progettato per essere utilizzato con una webcam o una fonte video piazzata in alto rispetto ai ragni. In questo modo, \'e stata semplificata notevolmente la logica di inseguimento, in quanto dal punto di vista del modulo i ragni si muovono su una griglia bidimensionale. Esso riconosce i ragni tramite cartoncini colorati che sono stati messi al di sopra di loro. Una volta riconosciuti entrambi i ragni, il modulo invia un messaggio al ragno inseguitore tramite una richiesta HTTP GET. La logica di inseguimento seguita dal modulo e' molto semplice: Il ragno inseguitore aggiusta il proprio orientamento, cio\'e ruota su se stesso, fin quando gli "occhi" non puntano il ragno inseguito, dopodiche' il ragno prosegue dritto.
 
-\section{Codice}
+\section{Dettagli implementativi}
 
 \subsection{Controller}
 
