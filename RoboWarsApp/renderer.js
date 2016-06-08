@@ -362,7 +362,7 @@ function ReadController(){
 
 function SendPackage(){
 	if(state == -1)//if retro
-		stri = "m0"+pad(velocityLeft,3)+""+pad(velocityRight,3);
+		stri = "m0"+pad(maxValue-velocityLeft,3)+""+pad(maxValue-velocityRight,3);
 	else if(state == 1)
 		stri = "m0"+pad(maxValue+velocityLeft+1,3)+""+pad(maxValue+velocityRight+1,3);
 	else
