@@ -57,7 +57,7 @@ class Vision:
 		# resize the frame, blur it, and convert it to the HSV
 		# color space
 		fourcc = cv2.cv.CV_FOURCC('m', 'p', '4', 'v')
-		self.video_writer = cv2.VideoWriter("output.avi", fourcc, 16, (900, h))
+		self.video_writer = cv2.VideoWriter("output.avi", fourcc, 12, (900, h))
 		if not self.video_writer :
 			print "!!! Failed VideoWriter: invalid parameters"
 			sys.exit(1)
