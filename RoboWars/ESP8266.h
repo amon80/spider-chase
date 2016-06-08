@@ -15,7 +15,7 @@
 #define Q_TIMEOUT   MSG_TIMEOUT
 #define COMMAND_SLEEP 500
 #define COMMAND_LONG_SLEEP 20000
-#define DEBUG 0
+#define DEBUG 1
 
 char * readResponse(void);
 void printWebPage(void);
@@ -93,29 +93,31 @@ static msg_t Uart1EVT_Thread(void *p) {
       /***********DO SOMETHING WITH RECEIVED MESSAGE************/
       char* clearRequest = StrStr(received, "+IPD"); //HTTP REQUEST
       if (StrStr(received, "+IPD") != NULL){
-        if (DEBUG)
-          chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s", "Received http request");
-        clientID[0] = clearRequest[5];
-        clientID[1] = '\0';
-        request = clearRequest[16]; //it is c for command (c=M0...)
-        command[0] = clearRequest[18];
-        command[1] = clearRequest[19];
-        command[2] = clearRequest[20];
-        command[3] = clearRequest[21];
-        command[4] = clearRequest[22];
-        command[5] = clearRequest[23];
-        command[6] = clearRequest[24];
-        command[7] = clearRequest[25];
-        command[8] = '\0';
-        if (DEBUG){
-          chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s", "Client id=");
-          chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s\n", clientID);
-          chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s", "Command=");
-          chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s\n", command);
-        }
-        if (request == 'c')
+        char* subStringCommand = StrStr(received,"c=");
+        if (subStringCommand[0] == 'c'){
+          if (DEBUG)
+            chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s", "Received http request");
+          clientID[0] = clearRequest[5];
+          clientID[1] = '\0';
+          request = subStringCommand[0]; //it is c for command (c=M0...)
+          command[0] = subStringCommand[2];
+          command[1] = subStringCommand[3];
+          command[2] = subStringCommand[4];
+          command[3] = subStringCommand[5];
+          command[4] = subStringCommand[6];
+          command[5] = subStringCommand[7];
+          command[6] = subStringCommand[8];
+          command[7] = subStringCommand[9];
+          command[8] = '\0';
+          if (DEBUG){
+            chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s", "Client id=");
+            chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s\n", clientID);
+            chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s", "Command=");
+            chprintf((BaseSequentialStream*)MONITOR_SERIAL, "%s\n", command);
+          }
           control_motor(command);
-        printWebPage();
+          printWebPage();
+        }
       }
       /***********END************/
       pos = 0;
