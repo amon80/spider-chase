@@ -372,7 +372,7 @@ function SendPackage(){
 
 	console.log('Invio:' + 'http://'+IP+'/?c='+stri)
 
-	var ls = cp.spawnSync('curl', ["-m 2" ,'http://'+IP+'/?c='+stri], { encoding : 'utf8' });
+	var ls = cp.spawn('curl', ["-m 1" ,'http://'+IP+'/?c='+stri], { encoding : 'utf8' });
 	// uncomment the following if you want to see everything returned by the spawnSync command
 	console.log('ls: ' , ls);
 	console.log('stdout here: \n' + ls.stdout);
