@@ -43,11 +43,21 @@ class Vision:
 		self.s_s_c2Upper = np.array((s_s_c2HSV[0][0][0]+10,255,255))
 
 		self.camera = cv2.VideoCapture(0)
-		fps = self.camera.get(cv2.cv.CV_CAP_PROP_FPS)
-		print "Frames per second using video.get(cv2.cv.CV_CAP_PROP_FPS): {0}".format(fps)
 		# video recorder
+
+
+		grabbed = False
+		while not grabbed:
+			(grabbed, frame) = self.camera.read()
+			#print("No frame D:")
+
+		frame = imutils.resize(frame, width=900)
+		h = frame.shape[0]
+		#print h
+		# resize the frame, blur it, and convert it to the HSV
+		# color space
 		fourcc = cv2.cv.CV_FOURCC('m', 'p', '4', 'v')
-		self.video_writer = cv2.VideoWriter("output.avi", fourcc, 25, (900, 506))
+		self.video_writer = cv2.VideoWriter("output.avi", fourcc, 16, (900, h))
 		if not self.video_writer :
 			print "!!! Failed VideoWriter: invalid parameters"
 			sys.exit(1)
