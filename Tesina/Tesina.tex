@@ -171,21 +171,55 @@ Il driver del motore utilizzato \'e il modello L9110s mostrato in figura.
 \begin{center}
 \includegraphics[keepaspectratio, width=200pt]{Images/motor_driver.png}
 \end{center}
-Dei suoi 10 pin totali, 4 sono di input e 4 di output, 1 di alimentazione e 1 di massa. Quelli in entrata vanno collegati agli output digitali della board, mentre di quelli in uscita 2 sono per il motore destro e 2 per quello sinistro, di cui 1 va all'alimentazione del motore ed uno alla massa. La regolazione della velocit\'a del motore \'e molto semplice e si basa sui PWM che sono collegati agli output digitali della board: se la frequenza del PWM  che arriva all'ingresso 1 \'e maggiore di quella che arriva all'ingresso 2, allora il ragno va in avanti, altrimenti va all'indietro. Maggiore \'e la differenza di, pi\'u il ragno va velocemente.
+Dei suoi 10 pin totali, 4 sono di input e 4 di output, 1 di alimentazione e 1 di massa. Quelli in entrata vanno collegati agli output digitali della board, mentre di quelli in uscita 2 sono per il motore destro e 2 per quello sinistro, di cui 1 va all'alimentazione del motore ed uno alla massa. La regolazione della velocit\'a del motore \'e molto semplice e si basa sui PWM che sono collegati agli output digitali della board: se la frequenza del PWM  che arriva all'ingresso 1 \'e maggiore di quella che arriva all'ingresso 2, allora il ragno va in avanti, altrimenti va all'indietro. Maggiore \'e la differenza di velocit\'a, pi\'u il ragno va velocemente. Di seguito \'e riportato un diagramma riepilogativo.
+
+\begin{center}
+\includegraphics[keepaspectratio, width=400pt]{Images/motor_driver_diagram.png}
+\end{center}
 
 \subsection{Modulo wireless}
-Il modulo wireless utilizzato \'e il modello  mostrato in figura. 
-\begin{center}
-gayyyy
-\end{center}
-I suoi pin si collegano, oltre che all'alimentazione ed alla massa, agli ingressi seriali della board. La comunicazione seriale ci ha consentito di comunicare in maniera molto semplice con il modulo, grazie anche agli esempi forniti dalle funzioni di base di ChiBiOs. Il modulo lavora principalmente nello strato di rete, in quanto pu\'o funzionare sia come client che come access point. Inoltre, se impostato come access point, lavora anche nello strato delle applicazioni, in quanto riconosce richieste HTTP di tipo sia GET che POST. Nel nostro caso, abbiamo fatto creare al modulo una rete WiFi, e per mandare messaggi al ragno \'e sufficiente mandare richieste GET tramite browser oppure curl una volta connessi alla rete creata dal modulo.
-
-\subsection{Visione Artificiale e logiche di inseguimento}
-Per il modulo di visione artificiale, abbiamo utilizzato lo standard \textit{de facto} nel campo, \textbf{opencv}. Il modulo \'e stato progettato per essere utilizzato con una webcam o una fonte video piazzata in alto rispetto ai ragni. In questo modo, \'e stata semplificata notevolmente la logica di inseguimento, in quanto dal punto di vista del modulo i ragni si muovono su una griglia bidimensionale. Esso riconosce i ragni tramite cartoncini colorati che sono stati messi al di sopra di loro. Una volta riconosciuti entrambi i ragni, il modulo invia un messaggio al ragno inseguitore tramite una richiesta HTTP GET. La logica di inseguimento seguita dal modulo e' molto semplice: Il ragno inseguitore aggiusta il proprio orientamento, cio\'e ruota su se stesso, fin quando gli "occhi" non puntano il ragno inseguito, dopodiche' il ragno prosegue dritto.
+Il movimento dei robot \`e controllato da remoto tramite connessione wireless. La comunicazione wireless \`e garantita grazie ai moduli ESP8266 che, connessi alla board nucleo stm32f4, sono in grado di:
+\begin{enumerate}
+	\item connettersi ad una rete locale, acquisendo un indirizzo IP
+	\item creare una connessione wireless locale
+\end{enumerate}
+In entrambi i casi, connettendosi alla rete del modulo \`e possibile scambiare messaggi tramite richieste http. Un semplice protocollo \`e stato realizzato per comandare i robot. L'idea \`e quella di codificare delle istruzioni di movimento in delle stringhe composte da 8 byte con il seguente significato:
+\begin{itemize}
+	\item il primo byte indica la tipologia di comando (attualmente \`e 'M' che sta per 'MOVE')
+	\item il secondo byte \`e l'ID del robot; \`e stato pensato per robot connessi alla stessa rete
+	\item 2 triple di 3 byte che codificano l'informazione di movimento relativamente per il motore destro e sinistro; una tripla pu\`o assumere un valore intero compreso tra 0 e 255: tra 0 e 127 si regola la velocit\`a di un motore in un senso; tra 128 e 255 si regola la velocit\`a del motore nell'altro senso
+\end{itemize}
+Il funzionamento del robot \`e descritto dal diagramma in figura \ref{fig:img}.
+\begin{figure}
+	\centering
+		\hspace*{-4.9cm}\includegraphics[width=1.7\textwidth]{Images/img.pdf}
+		\caption{Il diagramma mostra lo schema di funzionamento della board che controlla il robot.}
+	\label{fig:img}
+\end{figure}
 
 \section{Dettagli implementativi}
 
 \subsection{Controller}
+
+Per la comunicazione con i robot sono state utilizzate delle richieste http, con il formato descritto della sezione \ref{communication}. I due robot sono comandati rispettivamente da:	
+\begin{itemize}
+\item Soft-Joystick realizzato su Android (app Android) per il robot inseguito.
+\item RoboWarsApp, una web app realizzata con nodeJS che consente di comandare il robot inseguito tramite tastiera o joystick xbox360.
+\item Richieste http tramite python per il robot inseguitore.
+\end{itemize}
+
+\subsubsection{Android Controller}
+L'app android utilizza una componente grafica che realizza un Joystick (\url{https://github.com/zerokol/JoystickView}) e, a seconda della direzione del Joystick, invia richieste http al modulo ESP8266 con il formato descritto in \ref{communication}. L'immagine in figura \ref{fig:joy} mostra la semplice interfaccia grafica dell'app Android per il controllo del robot.
+
+\begin{figure}
+	\centering
+		\includegraphics[width=0.4\textwidth]{Images/joy.jpg}
+	\label{fig:joy}
+	\caption{L'immagine mostra l'intercaccia grafica del controller Android realizzato per comandare il robot.}
+\end{figure}
+
+\subsubsection{RoboWarsApp}
+
 
 \subsection{Driver motore}
 
@@ -195,7 +229,26 @@ Il driver del motore contiene la funzione di inizializzazione, la funzione di co
 
 \subsection{Modulo wireless}
 
-\lstinputlisting[caption=Wireless Module, style=c]{../RoboWars/ESP8266.h}
+ Per l'utilizzo della board con il sistema ChibiOS \`e stata realizzata una apposita libreria che racchiude diverse funzionalit\`a. Il modulo ESP8266 pu\`o essere configurato tramite comandi seriali (vedi \ref{fig:commands}). Per ogni comando, il modulo genera una risposta che pu\`o essere un ACK o un messaggio di errore.
+La libreria consente la configurazione del modulo come Access Point o come client (fornendo le credenziali di accesso ad una rete Wi-Fi) tramite due semplici funzioni. Chiamando qualsiasi di queste due funzioni, viene creato un Thread asincrono che rimane in ascolto di eventi sulla seriale a cui \`e collegato il modulo ESP8266. Nel caso specifico i moduli sono stati utilizzati come Access Point.
+I comandi fondamentali inviati in fase di setup sono:
+\begin{itemize}
+	\item comando di reset: "AT+RST"
+	\item comando di setup della modalit\`a di funzionamento: "AT+CWMODE=2" (per modalit\`a access point)
+	\item comando di start del server:  "AT+CIPSERVER=1,80";
+\end{itemize}
+Maggiori dettagli sui comandi disponibili sono mostrati nella tabella \ref{fig:commands}.
+\par Quando viene inviata una richiesta http al modulo, viene generato un evento sulla seriale e viene costruita la stringa con il messaggio ricevuto. Tale messaggio \`e composto da una intestazione e da una cosa. Un parser del messaggio \`e stato realizzato per estrarre la stringa di interesse (es. M0123200); decodificato il messaggio viene invocato il metodo 'control\_motor' della libreria 'MotorController.h' che prende in carico la richiesta e comanda i motori.
+\par Oltre alla seriale utilizzata per comunicare con l'ESP8266, la libreria utilizza anche la seriale USB per stampare a video i messaggi ricevuti dal modulo in tempo reale. Tale meccanismo \`e utile in fase di debug per conoscere lo stato del modulo ed intercettare eventuali errori. 
+
+\begin{figure}
+	\centering
+		\hspace*{-2cm}\includegraphics[width=1.30\textwidth]{Images/CommandsSet.pdf}
+	\label{fig:commands}
+	\caption{La tabella contiene i comandi riconosciuti dal modulo ESP8266 con relativa risposta.}
+\end{figure}
+
+\lstinputlisting[caption=Module, style=c]{../RoboWars/ESP8266.h}
 
 \subsection{Visione Artificiale}
 
