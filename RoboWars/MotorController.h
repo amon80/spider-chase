@@ -90,8 +90,8 @@ static void pwm2c1cb(PWMDriver *pwmp) {
 }
 
 //configuration for left engine
-static PWMConfig pwm1cfg = {10000, /* 10kHz PWM clock frequency.   */
-                            500, /* Initial PWM period 1S.       */
+static PWMConfig pwm1cfg = {200000, /* 10kHz PWM clock frequency.   */
+                            1024, /* Initial PWM period 1S.       */
                             pwmpcb, { {PWM_OUTPUT_ACTIVE_HIGH, pwmc1cb}, {
                                 PWM_OUTPUT_DISABLED, NULL},
                                      {PWM_OUTPUT_DISABLED, NULL}, {
@@ -99,8 +99,8 @@ static PWMConfig pwm1cfg = {10000, /* 10kHz PWM clock frequency.   */
                             0, 0};
 
 //configuration for right engine
-static PWMConfig pwm2cfg = {10000, /* 10kHz PWM clock frequency.   */
-                            500, /* Initial PWM period 1S.       */
+static PWMConfig pwm2cfg = {200000, /* 10kHz PWM clock frequency.   */
+                            1024, /* Initial PWM period 1S.       */
                             pwm2pcb, { {PWM_OUTPUT_ACTIVE_HIGH, pwm2c1cb}, {
                                 PWM_OUTPUT_DISABLED, NULL},
                                       {PWM_OUTPUT_DISABLED, NULL}, {
@@ -260,17 +260,19 @@ void control_motor(char* command) {
     functioPtrLeftUP = &Sinistra_Avanti_up;
     functioPtrLeftDOWN = &Sinistra_Avanti_Down;
 
-    pwm1 =  77.95 * velocity[0] + 100;
+    pwm1 =  8 * velocity[0] + 1;
+    chprintf(MONITOR_SERIAL, "%d - ", pwm1);
 
-    pwmEnableChannel(&PWMD1, 0, (pwmcnt_t)pwm1);
+    pwmEnableChannel(&PWMD1, 0, pwm1);
   }
   else {    //<128
     functioPtrLeftUP = &Sinistra_Dietro_up;
     functioPtrLeftDOWN = &Sinistra_Dietro_Down;
 
-    pwm1 = 77.95 * velocity[0] + 100;
+    pwm1 = 8 * velocity[0] + 1;
+    chprintf(MONITOR_SERIAL, "%d - ", pwm1);
 
-    pwmEnableChannel(&PWMD1, 0, (pwmcnt_t)pwm1);
+    pwmEnableChannel(&PWMD1, 0, pwm1);
   }
 
   if (velocity[1] >= 128) {
@@ -278,17 +280,19 @@ void control_motor(char* command) {
     functioPtrRightUP = &Destra_Avanti_up;
     functioPtrRightDOWN = &Destra_Avanti_Down;
 
-    pwm2 =  77.95 * velocity[1] + 100;
+    pwm2 =  8 * velocity[1] + 1;
+    chprintf(MONITOR_SERIAL, "%d - ", pwm1);
 
-    pwmEnableChannel(&PWMD3, 0, (pwmcnt_t)pwm2);
+    pwmEnableChannel(&PWMD3, 0, pwm2);
   }
   else {
     functioPtrRightUP = &Destra_Dietro_up;
     functioPtrRightDOWN = &Destra_Dietro_Down;
 
-    pwm2 = 77.95 * velocity[1] + 100;
+    pwm2 = 8 * velocity[1] + 1;
+    chprintf(MONITOR_SERIAL, "%d - ", pwm1);
 
-    pwmEnableChannel(&PWMD3, 0, (pwmcnt_t)pwm2);
+    pwmEnableChannel(&PWMD3, 0, pwm2);
   }
 
 }

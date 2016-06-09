@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccAnMu0T.s 			page 1
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccGktx1T.s 			page 1
 
 
    1              		.syntax unified
@@ -17,37 +17,37 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccAnMu0T.s 			page 1
   14              		.file	"hal_queues.c"
   15              		.text
   16              	.Ltext0:
-  17              		.section	.gnu.lto_.profile.ce13acc3,"",%progbits
+  17              		.section	.gnu.lto_.profile.ce91b60a,"",%progbits
   18 0000 789C6366 		.ascii	"x\234cf```d\200\002\000\000=\000\005"
   18      60606064 
   18      80020000 
   18      3D0005
   19              		.text
-  20              		.section	.gnu.lto_.inline.ce13acc3,"",%progbits
+  20              		.section	.gnu.lto_.inline.ce91b60a,"",%progbits
   21 0000 789C6366 		.ascii	"x\234cf\300\016\230\340,\000\000\234\000\006"
   21      C00E98E0 
   21      2C00009C 
   21      0006
   22              		.text
-  23              		.section	.gnu.lto_.pureconst.ce13acc3,"",%progbits
+  23              		.section	.gnu.lto_.pureconst.ce91b60a,"",%progbits
   24 0000 789C6366 		.ascii	"x\234cf```d\200\002\000\000=\000\005"
   24      60606064 
   24      80020000 
   24      3D0005
   25              		.text
-  26              		.section	.gnu.lto_.symbol_nodes.ce13acc3,"",%progbits
+  26              		.section	.gnu.lto_.symbol_nodes.ce91b60a,"",%progbits
   27 0000 789C6366 		.ascii	"x\234cf```b\200\001\000\000L\000\006"
   27      60606062 
   27      80010000 
   27      4C0006
   28              		.text
-  29              		.section	.gnu.lto_.refs.ce13acc3,"",%progbits
+  29              		.section	.gnu.lto_.refs.ce91b60a,"",%progbits
   30 0000 789C6366 		.ascii	"x\234cf```d\200\002\000\000=\000\005"
   30      60606064 
   30      80020000 
   30      3D0005
   31              		.text
-  32              		.section	.gnu.lto_.decls.ce13acc3,"",%progbits
+  32              		.section	.gnu.lto_.decls.ce91b60a,"",%progbits
   33 0000 789C6366 		.ascii	"x\234cf``P\001\342\377@\000\244\030\030\2418\200\201"
   33      60605001 
   33      E2FF4000 
@@ -56,9 +56,9 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccAnMu0T.s 			page 1
   34 0013 000000D0 		.ascii	"\000\000\000\3208\004v"
   34      380476
   35              		.text
-  36              		.section	.gnu.lto_.symtab.ce13acc3,"",%progbits
+  36              		.section	.gnu.lto_.symtab.ce91b60a,"",%progbits
   37              		.text
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccAnMu0T.s 			page 2
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccGktx1T.s 			page 2
 
 
   38              		.section	.gnu.lto_.opts,"",%progbits
@@ -86,7 +86,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccAnMu0T.s 			page 1
   44              		.comm	__gnu_lto_v1,1,1
   45              		.comm	__gnu_lto_slim,1,1
   46              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150529 (release) [ARM/embedded-4_9-br
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccAnMu0T.s 			page 3
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccGktx1T.s 			page 3
 
 
 DEFINED SYMBOLS

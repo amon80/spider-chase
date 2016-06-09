@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 1
 
 
    1              		.syntax unified
@@ -17,14 +17,14 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
   14              		.file	"pal.c"
   15              		.text
   16              	.Ltext0:
-  17              		.section	.gnu.lto_.profile.ce13bc32,"",%progbits
+  17              		.section	.gnu.lto_.profile.ce91af10,"",%progbits
   18 0000 789C6366 		.ascii	"x\234cf```a\200\000F\006\015\031\000\000\340\000M"
   18      60606061 
   18      80004606 
   18      0D190000 
   18      E0004D
   19              		.text
-  20              		.section	.gnu.lto_.jmpfuncs.ce13bc32,"",%progbits
+  20              		.section	.gnu.lto_.jmpfuncs.ce91af10,"",%progbits
   21 0000 789C6366 		.ascii	"x\234cf\300\016\344\24143\003##c=#\023##s}=\023\230"
   21      C00EE4A1 
   21      34330323 
@@ -35,7 +35,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
   22      0030F202 
   22      B5
   23              		.text
-  24              		.section	.gnu.lto_.inline.ce13bc32,"",%progbits
+  24              		.section	.gnu.lto_.inline.ce91af10,"",%progbits
   25 0000 789C6366 		.ascii	"x\234cf\300\016\336Bif\006\006N\016Ff\006F\020\013H"
   25      C00EDE42 
   25      69660606 
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
   29 004d 622806B0 		.ascii	"b(\006\260,\220\227\000\261\024\230\030\230w\210+0\000"
   29      2C909700 
   29      B1149818 
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 2
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 2
 
 
   29      9877882B 
@@ -74,14 +74,14 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
   32 007d 40900100 		.ascii	"@\220\001\000\311\250\037}"
   32      C9A81F7D 
   33              		.text
-  34              		.section	.gnu.lto_.pureconst.ce13bc32,"",%progbits
+  34              		.section	.gnu.lto_.pureconst.ce91af10,"",%progbits
   35 0000 789C6366 		.ascii	"x\234cf```g\200\000f\006)F)&I\000\001\273\000^"
   35      60606067 
   35      80006606 
   35      29462926 
   35      490001BB 
   36              		.text
-  37              		.section	.gnu.lto_palReadBus.ce13bc32,"",%progbits
+  37              		.section	.gnu.lto_palReadBus.ce91af10,"",%progbits
   38 0000 789C8D90 		.ascii	"x\234\215\220\313K\033Q\024\306\317w\357d\036Fiq)]\210"
   38      CB4B1B51 
   38      14C6CF77 
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
   45      9E38DD1C 
   45      DC1D3125 
   45      852169EE 
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 3
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 3
 
 
   45      6424
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
   57      6B47E7BD 
   57      341F8491 
   57      F1913227 
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 4
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 4
 
 
   57      567D64EA 
@@ -210,7 +210,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
   63      678757D6 
   63      92
   64              		.text
-  65              		.section	.gnu.lto_palWriteBus.ce13bc32,"",%progbits
+  65              		.section	.gnu.lto_palWriteBus.ce91af10,"",%progbits
   66 0000 789C8D52 		.ascii	"x\234\215R\317k\023Q\020~\337\333\315\356&\233M\252"
   66      CF6B1351 
   66      107EDFDB 
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
   70      996F269A 
   71 005d F8FF93A0 		.ascii	"\370\377\223\240\337\250&\204K'4\0019\373N\210\242%"
   71      DFA82684 
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 5
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 5
 
 
   71      4B273401 
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
   82      D9C970D1 
   82      8ED4
   83 013c A8A59DD6 		.ascii	"\250\245\235\326\346\226\305\223\240\261\223\273\336"
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 6
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 6
 
 
   83      E696C593 
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
   94      F447A0C9 
   94      9C4DA5D2 
   94      F4
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 7
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 7
 
 
   95 0216 CD8DE7B3 		.ascii	"\315\215\347\263\371\311B\346B&=YH\217\217M\244\013"
@@ -374,7 +374,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
   97 0239 0FAF5A1F 		.ascii	"\017\257Z\037\007"
   97      07
   98              		.text
-  99              		.section	.gnu.lto_palSetBusMode.ce13bc32,"",%progbits
+  99              		.section	.gnu.lto_palSetBusMode.ce91af10,"",%progbits
  100 0000 789C8D90 		.ascii	"x\234\215\220\317k\023Q\020\307\347;o\263\273&F\213"
  100      CF6B1351 
  100      10C7E73B 
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  108      9667F220 
  108      B93FADEF 
  108      BECC7CE5 
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 8
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 8
 
 
  108      98
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  120 0169 9E5880DD 		.ascii	"\236X\200\335\314J\002\330\364\022\2002$\276\276\341"
  120      CC4A02D8 
  120      F4128032 
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 9
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 9
 
 
  120      24BEBEE1 
@@ -507,7 +507,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  125      C54B7F00 
  125      39E5D4C5 
  126              		.text
- 127              		.section	.gnu.lto_.symbol_nodes.ce13bc32,"",%progbits
+ 127              		.section	.gnu.lto_.symbol_nodes.ce91af10,"",%progbits
  128 0000 789C55C8 		.ascii	"x\234U\310\261\015\2000\020\004\301\375\373\304\315"
  128      B10D8030 
  128      1004C1FD 
@@ -527,18 +527,18 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  131      1D4C3A93 
  131      1521
  132              		.text
- 133              		.section	.gnu.lto_.refs.ce13bc32,"",%progbits
+ 133              		.section	.gnu.lto_.refs.ce91af10,"",%progbits
  134 0000 789C6366 		.ascii	"x\234cf```d\200\002\000\000=\000\005"
  134      60606064 
  134      80020000 
  134      3D0005
  135              		.text
- 136              		.section	.gnu.lto_.decls.ce13bc32,"",%progbits
+ 136              		.section	.gnu.lto_.decls.ce91af10,"",%progbits
  137 0000 789CAD57 		.ascii	"x\234\255WyPTG\032\177\375zf\034\206\031H\324\030\213"
  137      79505447 
  137      1A7FFD7A 
  137      661C8619 
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 10
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 10
 
 
  137      48D4188B 
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  149      EC96EA27 
  149      FD7417BB 
  149      133CD8
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 11
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 11
 
 
  150 00eb 7D7F143F 		.ascii	"}\177\024?\217\210\266g\200\354\007\015\273\330\345"
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  161      874EB43D 
  161      534B945B 
  161      EF57E9
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 12
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 12
 
 
  162 01c3 D70AF3D0 		.ascii	"\327\012\363\320\021\300\027\312\370R4*\347r\267\234"
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  173      D6ABED5E 
  173      8E
  174 0294 2A3BD685 		.ascii	"*;\326\205H\212\257@\312j\345\224\371;g\014\202\245"
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 13
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 13
 
 
  174      488AAF40 
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  185      F360E216 
  185      1A2F17A7 
  186 0369 4C3D8B58 		.ascii	"L=\213Xh\276\257\254^\313X\334\360\014\265Q/\255\302"
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 14
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 14
 
 
  186      68BEAFAC 
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  197      FDDE157B 
  197      16392516 
  197      A077
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 15
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 15
 
 
  198 0445 1CD05657 		.ascii	"\034\320VW\350\035W\265W\034\330s\356\325:a\253\034"
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  209      64C2CD87 
  209      C507BCF1 
  209      213CE2B5 
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 16
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 16
 
 
  210 051d 143CF2F8 		.ascii	"\024<\362\370\023,\037\177\0123w\217rJy\013v\203\305"
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  221      3AF98CEE 
  221      C334F1DD 
  221      F4
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 17
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 17
 
 
  222 05ef 9E82FA2B 		.ascii	"\236\202\372+ON\340?\204\377\365\274\202i\270\376r\343"
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  233 06b9 FA62AB92 		.ascii	"\372b\253\222\272\237u\247\347\013Gj|\323\255B\256`"
  233      BA9F75A7 
  233      E70B476A 
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 18
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 18
 
 
  233      7CD3AD42 
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  244      7D146968 
  244      E4062EC6 
  244      A988
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 19
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 19
 
 
  245 0795 6A415AC3 		.ascii	"jAZ\303Z\347U\230G\225O\361C\373\231\356\332\370\242"
@@ -1138,7 +1138,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  256      AD52B6FF 
  256      921E
  257 0866 D07BB794 		.ascii	"\320{\267\224\015\250hY\254\241\307\356\354\226>\366"
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 20
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 20
 
 
  257      0DA86859 
@@ -1198,7 +1198,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  268      2BDA18
  269 0940 6A8830AE 		.ascii	"j\2100\256\010\213\215\262\030,\337\2551\232\247\255"
  269      088B8DB2 
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 21
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 21
 
 
  269      182CDFAD 
@@ -1258,7 +1258,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  280      E98D6111 
  280      10
  281 0a25 9D004F33 		.ascii	"\235\000O3\3141\341\024\035\316yC\367uL\244\305\010"
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 22
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 22
 
 
  281      CC31E114 
@@ -1283,7 +1283,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  285 0a72 69F67F01 		.ascii	"i\366\177\001\310\325,\265"
  285      C8D52CB5 
  286              		.text
- 287              		.section	.gnu.lto_.symtab.ce13bc32,"",%progbits
+ 287              		.section	.gnu.lto_.symtab.ce91af10,"",%progbits
  288 0000 70616C52 		.ascii	"palReadBus\000\000\000\000\000\000\000\000\000\000\000"
  288      65616442 
  288      75730000 
@@ -1318,7 +1318,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  296      6F2D7472 
  296      61707627 
  296      20272D6D 
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 23
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 23
 
 
  296      6370753D 
@@ -1341,7 +1341,7 @@ ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 1
  301              		.comm	__gnu_lto_v1,1,1
  302              		.comm	__gnu_lto_slim,1,1
  303              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150529 (release) [ARM/embedded-4_9-br
-ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccQ5SIq1.s 			page 24
+ARM GAS  C:\Users\Simone\AppData\Local\Temp\ccctGho1.s 			page 24
 
 
 DEFINED SYMBOLS
