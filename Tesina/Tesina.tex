@@ -177,7 +177,7 @@ Dei suoi 10 pin totali, 4 sono di input e 4 di output, 1 di alimentazione e 1 di
 \includegraphics[keepaspectratio, width=400pt]{Images/motor_driver_diagram.png}
 \end{center}
 
-\subsection{Modulo wireless}
+\subsection{Modulo wireless} \label{communication}
 Il movimento dei robot \`e controllato da remoto tramite connessione wireless. La comunicazione wireless \`e garantita grazie ai moduli ESP8266 che, connessi alla board nucleo stm32f4, sono in grado di:
 \begin{enumerate}
 	\item connettersi ad una rete locale, acquisendo un indirizzo IP
@@ -209,7 +209,7 @@ Per la comunicazione con i robot sono state utilizzate delle richieste http, con
 \end{itemize}
 
 \subsubsection{Android Controller}
-L'app android utilizza una componente grafica che realizza un Joystick (\url{https://github.com/zerokol/JoystickView}) e, a seconda della direzione del Joystick, invia richieste http al modulo ESP8266 con il formato descritto in \ref{communication}. L'immagine in figura \ref{fig:joy} mostra la semplice interfaccia grafica dell'app Android per il controllo del robot.
+L'app android utilizza una componente grafica che realizza un Joystick (\url{https://github.com/zerokol/JoystickView}) e, a seconda della direzione del Joystick, invia richieste http al modulo ESP8266 con il formato descritto in \ref{communication}. L'immagine in figura ~\ref{fig:joy} mostra la semplice interfaccia grafica dell'app Android per il controllo del robot.
 
 \begin{figure}
 	\centering
