@@ -9,7 +9,7 @@ const BrowserWindow = electron.BrowserWindow
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
-global.sharedObj = {button: null, axis: null};
+global.sharedObj = {button: null, axis: null, IP: null};
 
 var ipcMain = require('electron').ipcMain;
 ipcMain.on('show-prop1', function(event) {
@@ -21,7 +21,7 @@ function createWindow () {
   mainWindow = new BrowserWindow({width: 800, height: 600})
 
   // and load the index.html of the app.
-  mainWindow.loadURL('file://' + __dirname + '/index.html')
+  mainWindow.loadURL('file://' + __dirname + '/enter.html')
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools()

@@ -4,7 +4,7 @@ var controllers = {};
 var num = 0;
 
 function connecthandler(e) {
-  console.log("connected")
+  // console.log("connected")
   addgamepad(e.gamepad);
 }
 

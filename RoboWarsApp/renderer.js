@@ -3,14 +3,15 @@
 // All of the Node.js APIs are available in this process.
 const Gauge  = require('./gauge.min.js');
 const keycode = require('keycode');
-const request = require('request');
+// const request = require('request');
 const controller =  require('./Controller.js')
 
 var remote = require('electron').remote;
+var IP =remote.getGlobal('sharedObj').IP
 
 //dict maps numbers corrisponding to controller into directions and/or labels
 //a accelerates forward, b does nothing, y is hand brake and x accelerates backward
-var dict = {"12":"up","13":"down","15":"right","14":"left", "2":"x", "3":"y","0":"a", "1":"b", "7":"a", "6":"x"}
+var dict = {"up":"a","down":"x","15":"right","14":"left", "2":"x", "3":"y","0":"a", "1":"b", "7":"a", "6":"x", "right":"right","left":"left"}
  
 var retro = false;
 //state = 1 if moving forward, -1 if moving backward, 0 if halted
@@ -19,7 +20,7 @@ var velocityLeft = 0;
 var velocityRight = 0;
 var maxValue = 127;
 var minValue = 1;
-var accelerationIncrement = 5;
+var accelerationIncrement = 32;
 var brakeIncrement = accelerationIncrement;
 var naturalSpeedIncrement = accelerationIncrement/5;
 var cruiseControl = false;
@@ -132,7 +133,7 @@ function renderGauge() {
 //renderGauge is done outside this function
 function modifyVelocity(pressed){
 
-        console.log(pressed);
+        // console.log(pressed);
 	//a accelerates forward, b sets a fixed speed (cruise control), y is hand brake and x accelerates backward
 	
 	if (pressed == 'y') {
@@ -159,8 +160,27 @@ function modifyVelocity(pressed){
 				else{
 					velocityRight = maxValue;
 				}
+				if(velocityLeft != velocityRight){
+					velocityLeft > velocityRight ? velocityRight = velocityLeft : velocityLeft = velocityRight;
+				}
 			}
-			else if(pressed == 'x'){
+			if (pressed == "right"){
+				if(velocityRight+accelerationIncrement<= maxValue){
+					velocityRight+=accelerationIncrement;
+				}
+				else{
+					velocityRight = maxValue;
+				}
+			}
+			if (pressed == "left"){
+				if(velocityLeft+accelerationIncrement<= maxValue){
+					velocityLeft+=accelerationIncrement;
+				}
+				else{
+					velocityLeft = maxValue;
+				}
+			}
+			if(pressed == 'x'){
 				cruiseControl = false;
 				if(velocityLeft - brakeIncrement>=minValue){
 					velocityLeft-=brakeIncrement;
@@ -173,6 +193,9 @@ function modifyVelocity(pressed){
 				}
 				else{
 					velocityRight=minValue;
+				}
+				if(velocityLeft != velocityRight){
+					velocityLeft > velocityRight ? velocityRight = velocityLeft : velocityLeft = velocityRight;
 				}
 				if(velocityLeft == minValue && velocityRight == minValue){
 					state = 0;
@@ -195,8 +218,27 @@ function modifyVelocity(pressed){
 					else{
 						velocityRight = maxValue;
 					}
+					if(velocityLeft != velocityRight){
+						velocityLeft > velocityRight ? velocityRight = velocityLeft : velocityLeft = velocityRight;
+					}
 				}
-				else if(pressed == 'a'){
+				if (pressed == "right"){
+					if(velocityRight+accelerationIncrement<= maxValue){
+						velocityRight+=accelerationIncrement;
+					}
+					else{
+						velocityRight = maxValue;
+					}
+				}
+				if (pressed == "left"){
+					if(velocityLeft+accelerationIncrement<= maxValue){
+						velocityLeft+=accelerationIncrement;
+					}
+					else{
+						velocityLeft = maxValue;
+					}
+				}
+				if(pressed == 'a'){
 					cruiseControl = false;
 					if(velocityLeft-brakeIncrement>=minValue){
 						velocityLeft-=brakeIncrement;
@@ -218,11 +260,42 @@ function modifyVelocity(pressed){
 			else{ //quiet, state == 0
 				if (pressed == 'x') {
 					state = -1;
-					transitionBackward();
-				}
-				if (pressed == 'a') {
+					cruiseControl = false;
+					transitionBackward()
+					if(velocityLeft+accelerationIncrement<= maxValue){
+						velocityLeft+=accelerationIncrement;
+					}
+					else{
+						velocityLeft = maxValue;
+					}
+					if(velocityRight+accelerationIncrement<= maxValue){
+						velocityRight+=accelerationIncrement;
+					}
+					else{
+						velocityRight = maxValue;
+					}
+					if(velocityLeft != velocityRight){
+						velocityLeft > velocityRight ? velocityRight = velocityLeft : velocityLeft = velocityRight;
+					}
+				}if (pressed == 'a') {
 					state = 1;
-					transitionForward();
+					cruiseControl = false;
+					transitionForward()
+					if(velocityLeft+accelerationIncrement<= maxValue){
+						velocityLeft+=accelerationIncrement;
+					}
+					else{
+						velocityLeft = maxValue;
+					}
+					if(velocityRight+accelerationIncrement<= maxValue){
+						velocityRight+=accelerationIncrement;
+					}
+					else{
+						velocityRight = maxValue;
+					}
+					if(velocityLeft != velocityRight){
+						velocityLeft > velocityRight ? velocityRight = velocityLeft : velocityLeft = velocityRight;
+					}
 				}
 			}
 		}
@@ -232,40 +305,27 @@ function modifyVelocity(pressed){
 //Keyboard can be handled with EventListener...
 function ReadKeyboard(){
     window.addEventListener('keydown', function(e) {
+    	console.log("pressed: " + dict[keycode(e)])
         document.getElementById("type").src="./img/KeyBoard.png";
-        modifyVelocity(keycode(e));
+        modifyVelocity(dict[keycode(e)]);
+        renderGauge();
+		//if speeds are different(caused by acceleration, deceleration or turning), send a package to robot
+		if (velocityLeft != oldVelocityLeft || velocityRight != oldVelocityRight) {
+			SendPackage();
+			oldVelocityLeft = velocityLeft;
+			oldVelocityRight = velocityRight;
+		}
     });
 }
 
-//... while controller needs polling
-setInterval(ReadController, 100);
 function ReadController(){
 	var button = remote.getGlobal('sharedObj').button;
 	var axis = remote.getGlobal('sharedObj').axis;
 	//check buttons
 	if(button!=null){
-		console.log(remote.getGlobal('sharedObj').button);
+		// console.log(remote.getGlobal('sharedObj').button);
 		document.getElementById("type").src="./img/xboxPad.jpg";
 		modifyVelocity(dict[button]);
-	}
-	else{//slowly decrease velocity based on actual status
-		if(!cruiseControl){
-			if(velocityLeft-naturalSpeedIncrement>= minValue){
-				velocityLeft-=naturalSpeedIncrement;
-			}
-			else{
-				velocityLeft= minValue;
-			}
-			if(velocityRight-naturalSpeedIncrement>= minValue){
-				velocityRight-=naturalSpeedIncrement;
-			}
-			else{
-				velocityRight= minValue;
-			}
-			if(velocityLeft ==  minValue && velocityRight == minValue){
-				state = 0;
-			}
-		}
 	}
 	//check axis
 	if(axis){
@@ -302,19 +362,23 @@ function ReadController(){
 
 function SendPackage(){
 	if(state == -1)//if retro
-		stri = "m0"+pad(velocityLeft,3)+""+pad(velocityRight,3);
+		stri = "m0"+pad(maxValue-velocityLeft,3)+""+pad(maxValue-velocityRight,3);
 	else if(state == 1)
 		stri = "m0"+pad(maxValue+velocityLeft+1,3)+""+pad(maxValue+velocityRight+1,3);
 	else
 		stri = "m0128128"
 
-	// console.log(stri);
-	request
-		.get('http://192.168.4.1/?c='+stri)
-		.on('response', function(response) {
-			console.log(response.statusCode) // 200 
-			console.log(response.headers['content-type']) // 'image/png' 
-	})
+	var cp = require('child_process');
+
+	console.log('Invio:' + 'http://'+IP+'/?c='+stri)
+
+	var ls = cp.spawn('curl', ["-m 1" ,'http://'+IP+'/?c='+stri], { encoding : 'utf8' });
+	// uncomment the following if you want to see everything returned by the spawnSync command
+	console.log('ls: ' , ls);
+	console.log('stdout here: \n' + ls.stdout);
+	/*
+	var res = request('GET', 'http://192.168.4.1/?c='+stri);
+	console.log(res.getBody());*/
 }
 
 function pad(n, width, z) {
@@ -325,3 +389,5 @@ function pad(n, width, z) {
 
 CreateGauge();
 ReadKeyboard();
+//... while controller needs polling
+//setInterval(ReadController, 200);
