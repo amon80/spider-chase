@@ -1,16 +1,20 @@
-\documentclass [11pt ,a4paper ,twoside ]{article}
+\documentclass [11pt ,a4paper ,twoside ]{report}
 \title{\textbf{Spider-chase}}
 \author{Marco Mecchia\\
 		Luigi Giugliano\\
 		Simone Romano}
 \date{}
 
+\usepackage{amsmath}%
+\usepackage{amsfonts}%
+\usepackage{amssymb}%
 \usepackage{mathtools}
 \usepackage{listings}
 \usepackage[italian]{babel}
 \usepackage{color}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage[titletoc]{appendix}
 
 
 \definecolor{mygreen}{rgb}{0,0.6,0}
@@ -108,7 +112,7 @@
 
 \cleardoublepage
 
-\section{Introduzione}
+\chapter{Introduzione}
 
 Lo scopo del progetto "Spider-chase" \'e quello di mettere a frutto le conoscenze acquisite nel corso di robotica, sperimentando varie soluzioni riguardanti robot mobili. In particolare, nel nostro progetto abbiamo deciso di utilizzare dei ragni robot DIY (Do It Yourself) dal basso costo, controllati dal microcontrollore STM32 Nucleo. Questa scelta ci ha consentito di:
 
@@ -118,7 +122,7 @@ Lo scopo del progetto "Spider-chase" \'e quello di mettere a frutto le conoscenz
 \item Utilizzare ChiBiOs, un sistema operativo embedded fornito da STM, in modo da poter programmare i robot in maniera astratta ed evitare la programmazione \textit{bare metal}.
 \end{itemize}
 
-\subsection{Requisiti funzionali}
+\section{Requisiti funzionali}
 Ad inizio progetto ci siamo proposti i seguenti requisiti funzionali:
 \begin{itemize}
 \item Ogni ragno deve essere in grado di muoversi liberamente nello spazio, in qualunque direzione.
@@ -129,7 +133,7 @@ Ad inizio progetto ci siamo proposti i seguenti requisiti funzionali:
 
 Tali requisiti sono stati tutti soddisfatti dal risultato finale.
 
-\section{Architettura e componenti}
+\chapter{Architettura e componenti}
 
 Nel progetto abbiamo utilizzato i seguenti componenti:
 \begin{itemize}
@@ -151,7 +155,7 @@ L'architettura totale pianificata \'e mostrata in figura.
 
 Tutti e tre i ragni possono ricevere messaggi wireless che impostano le velocit\'a dei motori. Ricevuto il messaggio, la board regola le velocit\'a tramite il driver. Il requisito di localizzazione \'e soddisfatto da un modulo di visione artificiale: una webcam posta in alto riconosce i ragni, ed il pc alla quale \'e collegata invia messaggi direttamente ai ragni tramite WiFi. Inoltre, \'e possibile comandare i ragni tramite un cellulare Android od un pc, selezionando il ragno al quale si vogliono impartire i comandi. Ogni ragno \'e alimentato in maniera indipendente da 4 pile stilo poste in un portapile al di sotto del ragno stesso.
 
-\subsection{Ragni meccanici}
+\section{Ragni meccanici}
 
 I ragni meccanici che abbiamo comprato, mostrati in figura, utilizzano un solo motore per muovere sia le zampe a sinistra che quelle a destra. 
 \begin{center}
@@ -161,12 +165,12 @@ Bench\'e questa semplice soluzione sia sufficiente a far muovere il ragno avanti
 \begin{center}
 \includegraphics[keepaspectratio, width=300pt]{Images/double_spider.png}
 \end{center}
-\subsection{STM32F401RE Nucleo}
+\section{STM32F401RE Nucleo}
 La board Nucleo STM32 fornisce un'infrastruttura affidabile e flessibile per gli utenti che vogliono sperimentare nuove idee e prototipi che funzionino con tutte la linea di microcontrollori STM32. Grazie al supporto per la connettivit\'a Arduino e ST Morpho, \'e possibile espandere le funzionalit\'a del microcontrollore scegliendo da una vasta gamma di shield. Inoltre, la STM32 nucleo non richiede due ingressi separati per alimentazione e debugging.
 \begin{center}
 \includegraphics[keepaspectratio, width=200pt]{Images/STM32.png}
 \end{center}
-\subsection{Driver motore}
+\section{Driver motore}
 Il driver del motore utilizzato \'e il modello L9110s mostrato in figura. 
 \begin{center}
 \includegraphics[keepaspectratio, width=200pt]{Images/motor_driver.png}
@@ -177,7 +181,7 @@ Dei suoi 10 pin totali, 4 sono di input e 4 di output, 1 di alimentazione e 1 di
 \includegraphics[keepaspectratio, width=400pt]{Images/motor_driver_diagram.png}
 \end{center}
 
-\subsection{Modulo wireless} \label{communication}
+\section{Modulo wireless} \label{communication}
 Il movimento dei robot \`e controllato da remoto tramite connessione wireless. La comunicazione wireless \`e garantita grazie ai moduli ESP8266 che, connessi alla board nucleo stm32f4, sono in grado di:
 \begin{enumerate}
 	\item connettersi ad una rete locale, acquisendo un indirizzo IP
@@ -197,9 +201,9 @@ Il funzionamento del robot \`e descritto dal diagramma in figura \ref{fig:img}.
 	\label{fig:img}
 \end{figure}
 
-\section{Dettagli implementativi}
+\chapter{Dettagli implementativi}
 
-\subsection{Controller}
+\section{Controller}
 
 Per la comunicazione con i robot sono state utilizzate delle richieste http, con il formato descritto della sezione \ref{communication}. I due robot sono comandati rispettivamente da:	
 \begin{itemize}
@@ -208,7 +212,7 @@ Per la comunicazione con i robot sono state utilizzate delle richieste http, con
 \item Richieste http tramite python per il robot inseguitore.
 \end{itemize}
 
-\subsubsection{Android Controller}
+\subsection{Android Controller}
 L'app android utilizza una componente grafica che realizza un Joystick (\url{https://github.com/zerokol/JoystickView}) e, a seconda della direzione del Joystick, invia richieste http al modulo ESP8266 con il formato descritto in \ref{communication}. L'immagine in figura \ref{fig:joy} mostra la semplice interfaccia grafica dell'app Android per il controllo del robot.
 
 \begin{figure}
@@ -218,21 +222,20 @@ L'app android utilizza una componente grafica che realizza un Joystick (\url{htt
 	\label{fig:joy}
 \end{figure}
 
-\subsubsection{RoboWarsApp}
+\subsection{RoboWarsApp}
 La web app sviluppata consiste nella semplice interfaccia mostrata in figura.
 
 \begin{center}
 \end{center}
 
-\subsection{Driver motore}
+\section{Driver motore}
 
 Il driver del motore contiene la funzione di inizializzazione, la funzione di controllo del motore date le velocit\'a, ed una funzione di utilit\'a che estrae le due velocit\'a a partire da una stringa.
 
-\lstinputlisting[caption=Motor Driver, style=c]{../RoboWars/MotorController.h}
 
-\subsection{Modulo wireless}
+\section{Modulo wireless}
 
- Per l'utilizzo della board con il sistema ChibiOS \`e stata realizzata una apposita libreria che racchiude diverse funzionalit\`a. Il modulo ESP8266 pu\`o essere configurato tramite comandi seriali (vedi \ref{fig:commands}). Per ogni comando, il modulo genera una risposta che pu\`o essere un ACK o un messaggio di errore.
+ Per l'utilizzo della board con il sistema ChibiOS \`e stata realizzata una apposita libreria che racchiude diverse funzionalit\`a (vedi \ref{esp.h}). Il modulo ESP8266 pu\`o essere configurato tramite comandi seriali (vedi \ref{fig:commands}). Per ogni comando, il modulo genera una risposta che pu\`o essere un ACK o un messaggio di errore.
 La libreria consente la configurazione del modulo come Access Point o come client (fornendo le credenziali di accesso ad una rete Wi-Fi) tramite due semplici funzioni. Chiamando qualsiasi di queste due funzioni, viene creato un Thread asincrono che rimane in ascolto di eventi sulla seriale a cui \`e collegato il modulo ESP8266. Nel caso specifico i moduli sono stati utilizzati come Access Point.
 I comandi fondamentali inviati in fase di setup sono:
 \begin{itemize}
@@ -241,7 +244,7 @@ I comandi fondamentali inviati in fase di setup sono:
 	\item comando di start del server:  "AT+CIPSERVER=1,80";
 \end{itemize}
 Maggiori dettagli sui comandi disponibili sono mostrati nella tabella \ref{fig:commands}.
-\par Quando viene inviata una richiesta http al modulo, viene generato un evento sulla seriale e viene costruita la stringa con il messaggio ricevuto. Tale messaggio \`e composto da una intestazione e da una cosa. Un parser del messaggio \`e stato realizzato per estrarre la stringa di interesse (es. M0123200); decodificato il messaggio viene invocato il metodo 'control\_motor' della libreria 'MotorController.h' che prende in carico la richiesta e comanda i motori.
+\par Quando viene inviata una richiesta http al modulo, viene generato un evento sulla seriale e viene costruita la stringa con il messaggio ricevuto. Tale messaggio \`e composto da una intestazione e da una cosa. Un parser del messaggio \`e stato realizzato per estrarre la stringa di interesse (es. M0123200); decodificato il messaggio viene invocato il metodo 'control\_motor' della libreria 'MotorController.h' (vedi \ref{motor.h}) che prende in carico la richiesta e comanda i motori.
 \par Oltre alla seriale utilizzata per comunicare con l'ESP8266, la libreria utilizza anche la seriale USB per stampare a video i messaggi ricevuti dal modulo in tempo reale. Tale meccanismo \`e utile in fase di debug per conoscere lo stato del modulo ed intercettare eventuali errori. 
 
 \begin{figure}
@@ -251,20 +254,37 @@ Maggiori dettagli sui comandi disponibili sono mostrati nella tabella \ref{fig:c
 	\label{fig:commands}
 \end{figure}
 
-\lstinputlisting[caption=Module, style=c]{../RoboWars/ESP8266.h}
 
-\subsection{Visione Artificiale}
+\section{Visione Artificiale}
 
-\lstinputlisting[caption=Vision, style=python]{../Vision/Vision.py}
 
-\section{Conclusioni}
+\chapter{Conclusioni}
 
-\subsection{Sviluppi futuri}
+\section{Sviluppi futuri}
 Il progetto sviluppato ha soddisfatto appieno i requisiti funzionali che ci siamo preposti. Tuttavia, alcuni aspetti potranno essere sicuramente migliorati in futuro:
 \begin{itemize}
 \item I cartoncini colorati potranno essere sostituiti da markers per la realt\'a aumentata. Ci\'o migliorer\'a il riconoscimento dei ragni ed eliminer\'a la necessit\'a del doppio colore per stabilire l'orientamento del ragno inseguitore. 
 \item L'algoritmo di inseguimento potr\'a essere migliorato pianificando traiettorie di curvatura e aggiungendo a bordo del ragno un sensore di prossimit\'a.
 \item Si potrebbe eliminare la necessit\'a di un sistema di orientamento globale montando una webcam direttamente sui ragni.
 \end{itemize}
+
+
+\begin{appendices}
+  \chapter{Librerie ChibiOS}
+		\section{Libreria ESP8266} \label{esp.h}
+		In questo capitolo \`e riportata la libreria realizzata per il controllo del modulo ESP8266.h. La libreria \`e stata utilizzata nel codice caricato sulla board nucleo stm32f4.
+		
+	\lstinputlisting[caption=Module, style=c]{images/ESP8266.h}
+	
+	\section{Codice motori} \label{motor.h}
+	In questo capitolo \`e riportata la libreria realizzata per il controllo dei motori. La libreria ESP8266.h riceve e decodifica il messaggio e invoca la funzione di controllo dei motori che traduce il comando in segnali pwm per il driver dei motori.
+\lstinputlisting[caption=Motor Driver, style=c]{../RoboWars/MotorController.h}
+
+	\chapter{Visione artificiale} \label{vision}
+	Il codice seguente \`e stato realizzato per il robot 'inseguitore'. Degli algoritmi di visione artificiale consentono di localizzare il robot da inseguire; a questo punto opportuni comandi di movimento vengono inviati al robot 'inseguitore' per raggiunger il robot 'inseguito'.
+\lstinputlisting[caption=Vision, style=python]{../Vision/Vision.py}
+	
+\end{appendices}
+
 
 \end{document}
