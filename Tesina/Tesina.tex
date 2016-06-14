@@ -1,4 +1,4 @@
-\documentclass [11pt ,a4paper ,twoside ]{report}
+\documentclass [11pt ,a4paper]{report}
 \title{\textbf{Spider-chase}}
 \author{Marco Mecchia\\
 		Luigi Giugliano\\
@@ -201,6 +201,8 @@ Il funzionamento del robot \`e descritto dal diagramma in figura \ref{fig:img}.
 	\label{fig:img}
 \end{figure}
 
+\newpage
+
 \chapter{Dettagli implementativi}
 
 \section{Controller}
@@ -213,19 +215,17 @@ Per la comunicazione con i robot sono state utilizzate delle richieste http, con
 \end{itemize}
 
 \subsection{Android Controller}
-L'app android utilizza una componente grafica che realizza un Joystick (\url{https://github.com/zerokol/JoystickView}) e, a seconda della direzione del Joystick, invia richieste http al modulo ESP8266 con il formato descritto in \ref{communication}. L'immagine in figura \ref{fig:joy} mostra la semplice interfaccia grafica dell'app Android per il controllo del robot.
-
-\begin{figure}
-	\centering
-		\includegraphics[width=0.4\textwidth]{Images/joy.jpg}
-	\caption{L'immagine mostra l'intercaccia grafica del controller Android realizzato per comandare il robot.}
-	\label{fig:joy}
-\end{figure}
+L'app android utilizza una componente grafica che realizza un Joystick (\url{https://github.com/zerokol/JoystickView}) e, a seconda della direzione del Joystick, invia richieste http al modulo ESP8266 con il formato descritto in \ref{communication}. L'immagine in figura \ref{fig:joy} mostra la semplice interfaccia grafica dell'app Android per il controllo del robot.\\
+\begin{center}
+\includegraphics[width=0.2\textwidth]{Images/joy.jpg}
+\end{center}
+\newpage
 
 \subsection{RoboWarsApp}
 La web app sviluppata consiste nella semplice interfaccia mostrata in figura.
 
 \begin{center}
+\includegraphics[width=0.7\textwidth]{Images/robowarsapp.png}
 \end{center}
 
 \section{Driver motore}
@@ -247,15 +247,23 @@ Maggiori dettagli sui comandi disponibili sono mostrati nella tabella \ref{fig:c
 \par Quando viene inviata una richiesta http al modulo, viene generato un evento sulla seriale e viene costruita la stringa con il messaggio ricevuto. Tale messaggio \`e composto da una intestazione e da una cosa. Un parser del messaggio \`e stato realizzato per estrarre la stringa di interesse (es. M0123200); decodificato il messaggio viene invocato il metodo 'control\_motor' della libreria 'MotorController.h' (vedi \ref{motor.h}) che prende in carico la richiesta e comanda i motori.
 \par Oltre alla seriale utilizzata per comunicare con l'ESP8266, la libreria utilizza anche la seriale USB per stampare a video i messaggi ricevuti dal modulo in tempo reale. Tale meccanismo \`e utile in fase di debug per conoscere lo stato del modulo ed intercettare eventuali errori. 
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
-		\hspace*{-2cm}\includegraphics[width=1.30\textwidth]{Images/CommandsSet.pdf}
+		\hspace*{-2cm}\includegraphics[width=0.8\textwidth]{Images/CommandsSet.pdf}
 	\caption{La tabella contiene i comandi riconosciuti dal modulo ESP8266 con relativa risposta.}
 	\label{fig:commands}
 \end{figure}
 
 
+\newpage
+
 \section{Visione Artificiale}
+Tale modulo del sistema si occupa del riconoscere i ragni in base a dei cartoncini colorati che portano sul dorso e inviare i comandi al ragno che insegue per ``rincorrere'' il ragno che scappa.\\ Il ragno che insegue ha bisogno di due cartoncini perché è necessario riconoscere anche l'orientamento, mentre per quello inseguito uno e' piu' che sufficiente, visto che serve solo la sua posizione.\-\\\-\\\
+Il modulo di visione artiffciale è stato scritto in python versione 2.7 utilizzando come modulo OpenCV, che fornisce il binding a python delle funzioni C++.
+Lo script su ogni frame ottenuto dalla fotocamera, effettua una pipeline di preprocessing che consiste in: un sfocamento per rendere i contorni meno netti, la trasformazione dalla codifica di colori BGR a HSV per rendere il contrasto tra gli stessi piu' netto.\\
+Poi su questa immagine cosi ottenuta,  applica delle maschere per estrarre solo i colori a noi interessati su cui vengono applicata la così detta ``apertura'' per rendere il risultato della maschera piu' omogeneo.\\
+Una volta ottenute le varie maschere per ogni colore, applichiamo operazioni su vettori per ottenere la posizione e l'orientamento del ragno inseguitore rispetto alla posizione del ragno che scappa.\-\\\-\\\
+In base a tali posizioni inviamo i segnali al robot, attraverso una connessione Wi-fi con lo stesso. Per evitare di sovraccaricare il ragno inviando un segnale ad ogni frame, se il comando da spedire è uguale al comando precedente allora non lo si invia.
 
 
 \chapter{Conclusioni}

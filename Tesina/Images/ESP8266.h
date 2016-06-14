@@ -185,7 +185,6 @@ int mystrlen(char* text) {
     length++;
   }
 }
-
 /**
  * This function send a command on serial port SD1 to
  * ESP8266. You can listen for the response by calling
@@ -195,7 +194,6 @@ void sendToESP8266(char* command, int delay) {
   chprintf((BaseChannel *)WIFI_SERIAL, command);
   chThdSleepMilliseconds(delay);
 }
-
 /**
  * This method reads input from SD1 and print on Serial usb
  * monitor (SD2).
@@ -215,7 +213,6 @@ void readAndPrintResponse() {
   buff[0] = '\0';
   chprintf((BaseChannel *)MONITOR_SERIAL, '\0', 1);
 }
-
 void printWebPage() {
   char cipSend[100] = {"AT+CIPSEND="};
   /*char webPage[512] = {"<html><head></head><body>"
@@ -252,7 +249,6 @@ value='>'></form></td></tr>"
   strcat(closeCommand,"\r\n");
   sendToESP8266(closeCommand, COMMAND_SLEEP);
 }
-
 /**
  * Return length of str as char (es. '47')
  */
@@ -305,7 +301,6 @@ static void println(char *p) {
   }
   chSequentialStreamWrite(MONITOR_SERIAL, (uint8_t * )"\r\n", 2);
 }
-
 /* itoa:  convert n to characters in s */
  void itoa(int n, char s[]){
      int i, sign;
@@ -320,12 +315,10 @@ static void println(char *p) {
      s[i] = '\0';
      reverse(s);
  }
-
  /* reverse:  reverse string s in place */
 void reverse(char s[]){
     int i, j;
     char c;
-
     for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
         c = s[i];
         s[i] = s[j];
